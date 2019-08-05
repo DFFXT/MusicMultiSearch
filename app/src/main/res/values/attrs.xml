@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchView">
+        <attr name="searchView_hint" format="string"/>
+        <attr name="searchView_autoFocus" format="boolean"/>
+        <attr name="searchView_enable" format="boolean"/>
+        <attr name="searchView_searchBg" format="reference"/>
+        <attr name="searchView_hideSearchIcon" format="boolean"/>
+    </declare-styleable>
+</resources>

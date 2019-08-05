@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <View
+        android:id="@+id/view_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/search_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/iv_searchIcon"
+        app:layout_constraintBottom_toBottomOf="@id/et_searchView"
+        app:layout_constraintEnd_toEndOf="@id/et_searchView"/>
+    <ImageView
+        android:id="@+id/iv_searchIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_search_black_24dp"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_searchView"
+        app:layout_constraintBottom_toBottomOf="@id/et_searchView"/>
+    <EditText
+            android:id="@+id/et_searchView"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_weight="20"
+            android:textSize="@dimen/textSize_small"
+            android:singleLine="true"
+            android:background="@color/transparent"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="40dp"
+            android:imeOptions="actionSearch"
+            android:hint="@string/search"
+            android:inputType="text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_searchIcon"
+            app:layout_constraintEnd_toStartOf="@id/iv_delete"
+            tools:ignore="Autofill"/>
+
+    <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="10dp"
+            android:paddingStart="0dp"
+            android:src="@drawable/delete"
+            android:contentDescription="@null"
+            app:layout_constraintEnd_toStartOf="@id/tv_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textSize="@dimen/textSize_small"
+            android:text="@string/cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

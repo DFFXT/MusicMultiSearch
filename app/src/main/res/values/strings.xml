@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SimpleM</string>
+    <string name="search">搜索</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+
+    <string name="searchEngine_KW">酷我</string>
+    <string name="searchEngine_KG">酷狗</string>
+    <string name="searchEngine_BD">千千</string>
+    <string name="searchEngine_QQ">QQ</string>
+
+    <string name="selectDefaultSearchEngine">选择默认搜索引擎</string>
+
+</resources>
