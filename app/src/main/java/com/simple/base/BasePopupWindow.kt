@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import com.simple.view.MaxSizeOnMeasure
@@ -13,7 +14,7 @@ import com.simple.view.MyViewGroup
 
 open class BasePopupWindow @JvmOverloads constructor (
         private val ctx: Context,
-        val rootView: View,
+        val contentView: View,
         width:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
         height:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
         maxWidth:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -22,11 +23,11 @@ open class BasePopupWindow @JvmOverloads constructor (
     private val popupWindow: PopupWindow = PopupWindow(width, height)
     private var enableWindowDark=true
     var dismissCallback:(()->Unit)?=null
+    val rootView= MyViewGroup(ctx)
     init {
-        val viewGroup= MyViewGroup(ctx)
-        viewGroup.addView(rootView)
-        viewGroup.measureListener= MaxSizeOnMeasure(maxWidth,maxHeight)
-        popupWindow.contentView = viewGroup
+        rootView.addView(contentView)
+        rootView.measureListener= MaxSizeOnMeasure(maxWidth,maxHeight)
+        popupWindow.contentView = rootView
         setBackground(ColorDrawable(Color.TRANSPARENT))
         popupWindow.isOutsideTouchable = false
         popupWindow.isFocusable = true
@@ -40,15 +41,18 @@ open class BasePopupWindow @JvmOverloads constructor (
     fun enableWindowDark(enable:Boolean){
         enableWindowDark=enable
     }
+    fun isFocusable(focusable:Boolean){
+        popupWindow.isFocusable=focusable
+    }
 
     fun enableTouchDismiss(touchDismiss: Boolean,outTouchCallback:(()->Unit)?=null):BasePopupWindow{
         if (!touchDismiss) {
             popupWindow.isFocusable = true
             popupWindow.isOutsideTouchable = false
 
-            rootView.isFocusable = true
-            rootView.isFocusableInTouchMode = true
-            rootView.setOnKeyListener { _, keyCode, _ ->
+            contentView.isFocusable = true
+            contentView.isFocusableInTouchMode = true
+            contentView.setOnKeyListener { _, keyCode, _ ->
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     dismiss()
                     return@setOnKeyListener true
@@ -58,7 +62,7 @@ open class BasePopupWindow @JvmOverloads constructor (
             popupWindow.setTouchInterceptor(View.OnTouchListener { _, event ->
                 val x = event.x.toInt()
                 val y = event.y.toInt()
-                if (event.action == MotionEvent.ACTION_DOWN && (x < 0 || x >= rootView.width || y < 0 || y >= rootView.height)) {
+                if (event.action == MotionEvent.ACTION_DOWN && (x < 0 || x >= contentView.width || y < 0 || y >= contentView.height)) {
                     outTouchCallback?.invoke()
                     return@OnTouchListener true
                 } else if (event.action == MotionEvent.ACTION_OUTSIDE) {
@@ -86,6 +90,10 @@ open class BasePopupWindow @JvmOverloads constructor (
 
     fun setBackground(drawable: Drawable) {
         popupWindow.setBackgroundDrawable(drawable)
+    }
+
+    fun isShow():Boolean{
+        return popupWindow.isShowing
     }
 
 

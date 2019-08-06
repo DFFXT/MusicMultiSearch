@@ -14,12 +14,12 @@ abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView, this)
         if (layoutId() != 0) {
             setContentView(layoutId())
         }
         beforeView()
         initView(savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView, this)
     }
 
     abstract fun layoutId(): Int
@@ -32,7 +32,6 @@ abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         topInset = insets.systemWindowInsetTop
         bottomInset = insets.systemWindowInsetBottom
-        ViewCompat.onApplyWindowInsets(v, insets)
-        return insets
+        return ViewCompat.onApplyWindowInsets(v, insets)
     }
 }

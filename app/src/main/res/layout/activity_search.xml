@@ -5,18 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_searchMode"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.helper.widget.Layer
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingTop="6dp"
+        app:constraint_referenced_ids="iv_currentSearchEngine,searchView,view_line"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <ImageView
+        android:id="@+id/iv_currentSearchEngine"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:paddingStart="10dp"
-        android:paddingEnd="5dp"
-        android:textSize="@dimen/textSize_normal"
+        android:padding="8dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@id/searchView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/searchView"
-        android:text="baidu" />
+        tools:src="@drawable/icon_qq"/>
 
     <com.simple.module.search.view.SearchView
         android:id="@+id/searchView"
@@ -24,11 +30,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_searchMode"
+        app:layout_constraintStart_toEndOf="@id/iv_currentSearchEngine"
         app:layout_constraintTop_toTopOf="parent"
         app:searchView_hideSearchIcon="true"
         app:searchView_hint="@string/search"
-        app:searchView_searchBg="@null" />
+        app:searchView_searchBg="@color/transparent" />
 
     <View
         android:id="@+id/view_line"
@@ -37,24 +43,6 @@
         android:layout_marginTop="5dp"
         android:background="@color/gray"
         app:layout_constraintTop_toBottomOf="@id/searchView" />
-
-    <LinearLayout
-        android:id="@+id/layout_searchEngine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/selectDefaultSearchEngine"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_searchEngine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
