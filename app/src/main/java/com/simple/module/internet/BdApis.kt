@@ -1,12 +1,9 @@
 package com.simple.module.internet
 
-import com.simple.module.search.bean.bd.BdMusicInfoList
-import com.simple.module.search.bean.bd.BdMusicInfoRes
-import com.simple.module.search.bean.bd.BdSearchMusicResult
-import com.simple.module.search.bean.bd.BdSearchRes
-import com.simple.module.search.bean.kw.KwMusicInfoRes
-import com.simple.module.search.bean.kw.KwMusicPathRes
-import com.simple.module.search.bean.kw.KwSearchRes
+import com.simple.module.search.searchResult.bean.bd.BdMusicInfoList
+import com.simple.module.search.searchResult.bean.bd.BdMusicInfoRes
+import com.simple.module.search.searchResult.bean.bd.BdSearchMusicResult
+import com.simple.module.search.searchResult.bean.bd.BdSearchRes
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

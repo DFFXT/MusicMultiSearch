@@ -1,8 +1,8 @@
 package com.simple.module.internet
 
-import com.simple.module.search.bean.qq.QqLyricsRes
-import com.simple.module.search.bean.qq.QqMusicPathRes
-import com.simple.module.search.bean.qq.QqSearchRes
+import com.simple.module.search.searchResult.bean.qq.QqLyricsRes
+import com.simple.module.search.searchResult.bean.qq.QqMusicPathRes
+import com.simple.module.search.searchResult.bean.qq.QqSearchRes
 import retrofit2.Call
 import retrofit2.http.*
 

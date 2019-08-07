@@ -5,8 +5,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.simple.base.BaseActivity
 import com.simple.module.internet.log
-import com.simple.module.search.vm.SearchViewModel
-import com.simple.module.search.vm.Source
+import com.simple.module.search.searchResult.vm.SearchViewModel
+import com.simple.module.search.searchResult.vm.Source
 
 class MainActivity : BaseActivity() {
 

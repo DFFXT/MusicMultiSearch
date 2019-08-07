@@ -1,9 +1,7 @@
 package com.simple.module.internet
 
-import com.simple.module.search.bean.kg.KgMusicInfoRes
-import com.simple.module.search.bean.kg.KgSearchRes
-import com.simple.module.search.bean.kw.KwMusicInfoRes
-import com.simple.module.search.bean.kw.KwSearchRes
+import com.simple.module.search.searchResult.bean.kg.KgMusicInfoRes
+import com.simple.module.search.searchResult.bean.kg.KgSearchRes
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

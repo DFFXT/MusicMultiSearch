@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="@id/searchView"
         tools:src="@drawable/icon_qq"/>
 
-    <com.simple.module.search.view.SearchView
+    <com.simple.module.search.searchResult.view.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
