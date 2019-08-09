@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.simple.tools.WindowUtil
 
 abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
 
@@ -14,6 +15,8 @@ abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowUtil.setTransparentStatusBar(window)
+        WindowUtil.setLightStatus(window)
         if (layoutId() != 0) {
             setContentView(layoutId())
         }

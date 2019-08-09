@@ -40,6 +40,13 @@ class SearchView @JvmOverloads constructor(
             field = v
             editText.hint = v
         }
+    var text: String = ""
+        get() = editText.text.toString()
+        set(value) {
+            field = value
+            editText.setText(value)
+            editText.setSelection(value.length)
+        }
     var cancelCallback: ((View) -> Unit)? = null
         set(v) {
             field = v

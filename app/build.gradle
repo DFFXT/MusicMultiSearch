@@ -43,6 +43,9 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-16'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-16'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
 
 
 }

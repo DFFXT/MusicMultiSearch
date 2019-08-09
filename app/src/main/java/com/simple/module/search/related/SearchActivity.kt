@@ -1,8 +1,11 @@
 package com.simple.module.search.related
 
 import android.animation.ValueAnimator
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.core.animation.addListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.R
@@ -12,7 +15,6 @@ import com.simple.base.BasePopupWindow
 import com.simple.base.BaseSingleAdapter
 import com.simple.module.search.searchResult.SearchResultActivity
 import com.simple.module.search.searchResult.vm.Source
-import com.simple.tools.ConfigIO
 import com.simple.tools.SoftInputUtil
 import com.simple.tools.WindowUtil
 import kotlinx.android.synthetic.main.activity_search.*
@@ -36,8 +38,8 @@ class SearchActivity : BaseActivity() {
         }
     }
     private val popupWindow: BasePopupWindow by lazy {
-        val pop = BasePopupWindow(this, layoutInflater.inflate(R.layout.layout_search_engine, null, false), WindowUtil.screenWidth(), WindowUtil.screenHeight())
-        pop.isFocusable(false)
+        val pop = BasePopupWindow(this, R.layout.layout_search_engine, WindowUtil.screenWidth(), WindowUtil.screenHeight())
+                .isFocusable(false)
         pop.rootView.setOnClickListener {
             hideSearchEngine()
         }
@@ -47,7 +49,10 @@ class SearchActivity : BaseActivity() {
         return@lazy pop
     }
 
+
     override fun initView(savedInstanceState: Bundle?) {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        searchView.text=intent.getStringExtra("keyword")?:""
         iv_currentSearchEngine.setOnClickListener {
             showSearchEnginePop()
         }
@@ -57,7 +62,10 @@ class SearchActivity : BaseActivity() {
             SoftInputUtil.closeInput(it)
         }
         searchView.searchCallback={
-            SearchResultActivity.actionStart(this,it)
+            if(it.isNotEmpty()){
+                SoftInputUtil.closeInput(searchView)
+                SearchResultActivity.actionStart(this,it)
+            }
         }
     }
 
@@ -67,10 +75,11 @@ class SearchActivity : BaseActivity() {
         popupWindow.showCenter(window.decorView)
         popupWindow.contentView.visibility = View.INVISIBLE
         popupWindow.contentView.post {
-            popupWindow.rootView.setPaddingRelative(0, view_line.bottom, 0, 0)
+            popupWindow.rootView.setPaddingRelative(0, view_line.bottom-topInset, 0, 0)
             popupWindow.contentView.visibility = View.VISIBLE
-            popupWindow.contentView.translationY = -popupWindow.contentView.measuredHeight.toFloat()
-            val animator = ValueAnimator.ofFloat(-popupWindow.contentView.measuredHeight.toFloat(), 0f)
+            val y=-popupWindow.contentView.measuredHeight.toFloat()+topInset
+            popupWindow.contentView.translationY = y
+            val animator = ValueAnimator.ofFloat(y, 0f)
             animator.duration = duration
             animator.addUpdateListener {
                 popupWindow.contentView.translationY = it.animatedValue as Float
@@ -108,6 +117,12 @@ class SearchActivity : BaseActivity() {
 
     companion object {
         const val DEF_SEARCH_ENGINE_KEY = "DEF_SEARCH_ENGINE_KEY"
+        @JvmStatic
+        fun actionStart(ctx:Context,keyword:String=""){
+            val intent = Intent(ctx, SearchActivity::class.java)
+            intent.putExtra("keyword", keyword)
+            ctx.startActivity(intent)
+        }
     }
 
 }

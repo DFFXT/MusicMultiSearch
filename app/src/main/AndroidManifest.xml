@@ -20,6 +20,7 @@
         <activity
             android:configChanges="screenSize|screenLayout"
             android:screenOrientation="portrait"
+            android:theme="@style/SplashThem"
             android:name=".module.search.related.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -30,7 +31,10 @@
         </activity>
         <activity
             android:screenOrientation="portrait"
+            android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:name=".module.search.searchResult.SearchResultActivity" />
+        <activity android:name=".module.download.DownloadActivity" />
         <!-- <activity android:name=".module.search.SearchActivity"/>-->
     </application>
 

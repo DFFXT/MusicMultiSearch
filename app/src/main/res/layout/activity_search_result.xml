@@ -1,61 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.constraintlayout.helper.widget.Layer
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/themeColor"
+        android:fitsSystemWindows="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:constraint_referenced_ids="iv_back,tv_keyword,iv_searchIcon"/>
+        app:layout_constraintTop_toTopOf="parent" >
+
     <ImageView
         android:id="@+id/iv_back"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:contentDescription="@null"
         android:padding="5dp"
         android:src="@drawable/icon_back_black"
-        android:contentDescription="@null"
         android:tint="@color/white"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="6dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <TextView
         android:id="@+id/tv_keyword"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/search_bg"
+        android:layout_height="36dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        app:layout_constraintStart_toEndOf="@id/iv_back"
+        android:background="@drawable/search_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back"
         app:layout_constraintEnd_toStartOf="@id/iv_searchIcon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/iv_back"/>
+        app:layout_constraintStart_toEndOf="@id/iv_back"
+        app:layout_constraintTop_toTopOf="@id/iv_back" />
+
     <ImageView
         android:id="@+id/iv_searchIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:padding="5dp"
         android:contentDescription="@null"
+        android:padding="5dp"
         android:src="@drawable/ic_search_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iv_back"
-        app:layout_constraintBottom_toBottomOf="@id/iv_back"/>
+        app:layout_constraintTop_toTopOf="@id/iv_back" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:srlEnableRefresh="false"
-        app:layout_constraintTop_toBottomOf="@id/iv_back"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top"
+        app:srlEnableRefresh="false">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_searchResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:divider="@drawable/recycler_divider"
+            android:paddingTop="10dp" />
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

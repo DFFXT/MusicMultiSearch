@@ -14,7 +14,7 @@ import com.simple.view.MyViewGroup
 
 open class BasePopupWindow @JvmOverloads constructor (
         private val ctx: Context,
-        val contentView: View,
+        val layout: Int,
         width:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
         height:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
         maxWidth:Int=ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -24,7 +24,9 @@ open class BasePopupWindow @JvmOverloads constructor (
     private var enableWindowDark=true
     var dismissCallback:(()->Unit)?=null
     val rootView= MyViewGroup(ctx)
+    val contentView:View
     init {
+        contentView=rootView.inflate(layout,false)
         rootView.addView(contentView)
         rootView.measureListener= MaxSizeOnMeasure(maxWidth,maxHeight)
         popupWindow.contentView = rootView
@@ -41,8 +43,9 @@ open class BasePopupWindow @JvmOverloads constructor (
     fun enableWindowDark(enable:Boolean){
         enableWindowDark=enable
     }
-    fun isFocusable(focusable:Boolean){
+    fun isFocusable(focusable:Boolean):BasePopupWindow{
         popupWindow.isFocusable=focusable
+        return this
     }
 
     fun enableTouchDismiss(touchDismiss: Boolean,outTouchCallback:(()->Unit)?=null):BasePopupWindow{
@@ -86,6 +89,10 @@ open class BasePopupWindow @JvmOverloads constructor (
             window.attributes = lp
         }
         animator.start()
+    }
+    fun setClipingEnable(enable: Boolean):BasePopupWindow{
+        popupWindow.isClippingEnabled=enable
+        return this
     }
 
     fun setBackground(drawable: Drawable) {

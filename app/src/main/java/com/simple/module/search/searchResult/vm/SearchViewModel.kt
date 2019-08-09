@@ -43,6 +43,7 @@ class SearchViewModel : BaseViewModle() {
 
 
     fun search(keyword: String) {
+        if(keyword.isEmpty())return
         if (this.keyword != keyword) {
             page = 1
             this.keyword = keyword

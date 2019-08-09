@@ -10,5 +10,7 @@
     <string name="searchEngine_QQ">QQ</string>
 
     <string name="selectDefaultSearchEngine">选择默认搜索引擎</string>
+    <string name="download">下载</string>
+    <string name="share">分享</string>
 
 </resources>

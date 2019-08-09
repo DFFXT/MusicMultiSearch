@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_selector_gray_transparent"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/iv_musicOpIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="@null"
+        android:padding="10dp"
+        tools:src="@drawable/info_icon"/>
+    <TextView
+        android:id="@+id/tv_musicOp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textSize="@dimen/textSize_normal"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="@drawable/bottom_line_1px"
+        tools:text="Operate"/>
+
+</LinearLayout>

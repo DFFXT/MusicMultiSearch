@@ -52,4 +52,7 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         iv.setImageResource(drawableId)
         return iv
     }
+    fun <T:View> findView(@IdRes id:Int):T{
+        return itemView.findViewById(id)
+    }
 }
