@@ -9,8 +9,16 @@
     <string name="searchEngine_BD">千千</string>
     <string name="searchEngine_QQ">QQ</string>
 
+    <string name="playType_ONE_CYCLE">单曲循环</string>
+    <string name="playType_ALL_CYCLE">顺序循环</string>
+    <string name="playType_RANDOM">随机播放</string>
+
     <string name="selectDefaultSearchEngine">选择默认搜索引擎</string>
+    <string name="downloadManager">下载管理</string>
     <string name="download">下载</string>
+    <string name="downloading">正在下载</string>
+    <string name="completeDownload">下载完成</string>
     <string name="share">分享</string>
+
 
 </resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="@color/themeColor"
+        android:paddingBottom="4dp"
+        android:orientation="vertical">
+        <com.simple.view.TopBarLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:topBar_tint="@color/white"
+            app:topBar_mainTitleText="@string/downloadManager"
+            app:topBar_mainTitleColor="@color/white"
+            app:topBar_startImage="@drawable/icon_back_black"/>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabIndicatorFullWidth="false"
+            app:tabTextColor="@color/white"/>
+    </LinearLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_download"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

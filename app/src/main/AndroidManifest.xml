@@ -36,6 +36,7 @@
             android:name=".module.search.searchResult.SearchResultActivity" />
         <activity android:name=".module.download.DownloadActivity" />
         <!-- <activity android:name=".module.search.SearchActivity"/>-->
+        <service android:name=".module.player.MusicPlayer" />
     </application>
 
 </manifest>

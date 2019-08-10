@@ -32,7 +32,9 @@ class SearchResultActivity : BaseActivity() {
         holder.findView<View>(R.id.iv_info).setOnClickListener {
             dialog.show(item)
         }
-        holder.itemView.setOnClickListener { }
+        holder.itemView.setOnClickListener {
+windowManager
+        }
     }
     private val dialog: MusicOpBottomSheet by lazy { MusicOpBottomSheet(this) }
 
