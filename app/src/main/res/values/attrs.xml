@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SearchView">
-        <attr name="searchView_hint" format="string"/>
-        <attr name="searchView_autoFocus" format="boolean"/>
-        <attr name="searchView_enable" format="boolean"/>
-        <attr name="searchView_searchBg" format="reference"/>
-        <attr name="searchView_hideSearchIcon" format="boolean"/>
+        <attr name="searchView_hint" format="string" />
+        <attr name="searchView_autoFocus" format="boolean" />
+        <attr name="searchView_enable" format="boolean" />
+        <attr name="searchView_searchBg" format="reference" />
+        <attr name="searchView_hideSearchIcon" format="boolean" />
     </declare-styleable>
     <declare-styleable name="TopBarLayout">
-        <attr name="topBar_startImage" format="reference"/>
-        <attr name="topBar_endImage" format="reference"/>
-        <attr name="topBar_mainTitleColor" format="color"/>
-        <attr name="topBar_subtitleColor" format="color"/>
-        <attr name="topBar_mainTitleText" format="reference|string"/>
-        <attr name="topBar_subtitleText" format="reference|string"/>
-        <attr name="topBar_endText" format="reference|string"/>
-        <attr name="topBar_tint" format="color"/>
+        <attr name="topBar_startImage" format="reference" />
+        <attr name="topBar_endImage" format="reference" />
+        <attr name="topBar_mainTitleColor" format="color" />
+        <attr name="topBar_subtitleColor" format="color" />
+        <attr name="topBar_mainTitleText" format="reference|string" />
+        <attr name="topBar_subtitleText" format="reference|string" />
+        <attr name="topBar_endText" format="reference|string" />
+        <attr name="topBar_tint" format="color" />
+    </declare-styleable>
+    <declare-styleable name="RoundImageView">
+        <attr name="iv_radius" format="dimension" />
+        <attr name="iv_type" format="enum">
+            <enum name="round" value="0" />
+            <enum name="circle" value="1" />
+        </attr>
+        <attr name="measure" format="string" />
     </declare-styleable>
 </resources>

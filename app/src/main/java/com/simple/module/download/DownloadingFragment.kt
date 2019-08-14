@@ -1,8 +1,11 @@
 package com.simple.module.download
 
 import com.simple.R
-import com.simple.base.BaseFragment
+import com.simple.base.BaseNavFragment
 
-class DownloadingFragment:BaseFragment() {
-    override fun getLayoutId() = R.layout.fragment_downloading
+class DownloadingFragment:BaseNavFragment() {
+    override fun layoutId() = R.layout.fragment_downloading
+    override fun initView() {
+
+    }
 }

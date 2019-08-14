@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModle:ViewModel(),CoroutineScope {
+open class BaseViewModel:ViewModel(),CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main+job
     private val job= SupervisorJob()

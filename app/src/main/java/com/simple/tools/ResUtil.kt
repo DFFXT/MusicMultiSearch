@@ -19,6 +19,10 @@ import java.util.*
 
 object ResUtil {
     @JvmStatic
+    fun dpToPx(dp: Float): Int {
+        return (MyApplication.ctx.resources.displayMetrics.density * dp + 0.5).toInt()
+    }
+    @JvmStatic
     fun getString(@StringRes id: Int): String {
         return MyApplication.ctx.resources.getString(id)
     }

@@ -12,6 +12,7 @@
     <string name="playType_ONE_CYCLE">单曲循环</string>
     <string name="playType_ALL_CYCLE">顺序循环</string>
     <string name="playType_RANDOM">随机播放</string>
+    <string name="time_0">00:00</string>
 
     <string name="selectDefaultSearchEngine">选择默认搜索引擎</string>
     <string name="downloadManager">下载管理</string>
@@ -19,6 +20,9 @@
     <string name="downloading">正在下载</string>
     <string name="completeDownload">下载完成</string>
     <string name="share">分享</string>
+    <string name="addToNextPlay">下一首播放</string>
+    <string name="musicExist">歌曲文件已存在</string>
+    <string name="musicCount">（%d首）</string>
 
 
 </resources>

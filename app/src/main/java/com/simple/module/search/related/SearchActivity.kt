@@ -1,19 +1,19 @@
 package com.simple.module.search.related
 
 import android.animation.ValueAnimator
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.core.animation.addListener
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.R
 import com.simple.base.BaseActivity
 import com.simple.base.BaseAdapter
 import com.simple.base.BasePopupWindow
 import com.simple.base.BaseSingleAdapter
-import com.simple.module.search.searchResult.SearchResultActivity
 import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.SoftInputUtil
 import com.simple.tools.WindowUtil
@@ -64,7 +64,11 @@ class SearchActivity : BaseActivity() {
         searchView.searchCallback={
             if(it.isNotEmpty()){
                 SoftInputUtil.closeInput(searchView)
-                SearchResultActivity.actionStart(this,it)
+                val intent=Intent()
+                intent.putExtra(DATA,it)
+                setResult(Activity.RESULT_OK,intent)
+                finish()
+                //SearchResultActivity.actionStart(this,it)
             }
         }
     }
@@ -116,12 +120,13 @@ class SearchActivity : BaseActivity() {
 
 
     companion object {
+        const val DATA= "data"
         const val DEF_SEARCH_ENGINE_KEY = "DEF_SEARCH_ENGINE_KEY"
         @JvmStatic
-        fun actionStart(ctx:Context,keyword:String=""){
+        fun actionStart(ctx:FragmentActivity,keyword:String="",code:Int){
             val intent = Intent(ctx, SearchActivity::class.java)
             intent.putExtra("keyword", keyword)
-            ctx.startActivity(intent)
+            ctx.startActivityForResult(intent,code)
         }
     }
 

@@ -1,15 +1,17 @@
 package com.simple.module.search.searchResult.vm
 
 import androidx.lifecycle.MutableLiveData
-import com.simple.base.BaseViewModle
+import com.simple.base.BaseViewModel
 import com.simple.bean.Lyrics
+import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
 import com.simple.module.internet.observer
 import com.simple.module.search.searchResult.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class SearchViewModel : BaseViewModle() {
+class SearchViewModel : BaseViewModel() {
     private val kwModel: KwModel by lazy { KwModel() }
     private val kgModel: KgModel by lazy { KgModel() }
     private val bdModel: BdModel by lazy { BdModel() }
@@ -27,9 +29,7 @@ class SearchViewModel : BaseViewModle() {
         set(value) {
             if (field == value) return
             field = value
-            page = 0
-            searchResultList.total = 0
-            searchResultList.data.clear()
+            reset()
         }
     private val searchResultList = SearchMusicRes(0, arrayListOf())
 
@@ -41,11 +41,16 @@ class SearchViewModel : BaseViewModle() {
     private var pageSize = 20
     private var keyword = ""
 
+    fun reset() {
+        page = 1
+        searchResultList.data.clear()
+        searchResultList.total = 0
+    }
 
     fun search(keyword: String) {
-        if(keyword.isEmpty())return
+        if (keyword.isEmpty()) return
         if (this.keyword != keyword) {
-            page = 1
+            reset()
             this.keyword = keyword
         }
         launch(Dispatchers.IO) {
@@ -58,30 +63,60 @@ class SearchViewModel : BaseViewModle() {
         }
     }
 
+    fun requestFull(music: Music, callback: (Music) -> Unit) {
+        launch(Dispatchers.IO) {
+            if (music.iconPath.isEmpty()) {
+                music.iconPath = mRequestPic(music.musicId)
+            }
+            if (music.musicPath.isEmpty()) {
+                music.musicPath = mRequestPath(music.musicId)
+            }
+            withContext(coroutineContext) {
+                callback(music)
+            }
+        }
+
+
+    }
+
     fun requestLrc(id: String) {
         launch(Dispatchers.IO) {
             model.requestLrc(id).observer({
                 liveLrc.postValue(it)
             })
         }
+    }
 
+    private fun mRequestLrc(id: String): List<Lyrics> {
+        return model.requestLrc(id).data!!
     }
 
     fun requestPic(id: String) {
         launch(Dispatchers.IO) {
-            model.requestPic(id).observer({
-                livePic.postValue(it)
-            })
+            livePic.postValue(mRequestPic(id))
         }
+    }
+
+    private fun mRequestPic(id: String): String {
+        var res = ""
+        model.requestPic(id).observer({
+            res = it
+        })
+        return res
     }
 
     fun requestPath(id: String) {
         launch(Dispatchers.IO) {
-            model.requestPath(id).observer({
-                livePath.postValue(it)
-            })
+            livePath.postValue(mRequestPath(id))
         }
+    }
 
+    private fun mRequestPath(id: String): String {
+        var res = ""
+        model.requestPath(id).observer({
+            res = it
+        })
+        return res
     }
 
 }

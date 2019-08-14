@@ -7,12 +7,19 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 
-abstract class BaseFragment:Fragment() {
+abstract class BaseFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(getLayoutId(),container,false)
+    lateinit var rootView: View
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        rootView = inflater.inflate(layoutId(), container, false)
+        initView()
+        return rootView
     }
 
+
     @LayoutRes
-    abstract fun getLayoutId():Int
+    abstract fun layoutId(): Int
+
+    abstract fun initView()
+
 }

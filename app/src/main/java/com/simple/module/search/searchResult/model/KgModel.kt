@@ -8,6 +8,7 @@ import com.simple.module.internet.KgApis
 import com.simple.module.internet.RetrofitPack
 import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
+import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.LyricsAnalysis
 import com.simple.tools.ResUtil
 
@@ -16,19 +17,20 @@ class KgModel : ISearchModel {
     override fun search(keyword: String, page: Int, pageSize: Int): Transform<SearchMusicRes> {
         return http.search(keyword, page, pageSize).setTransform {
             return@setTransform SearchMusicRes(
-                    total = it.data.total,
-                    data = it.data.lists.map { rowMusic ->
-                        Music(
-                                musicId = rowMusic.fileHash,
-                                musicName = rowMusic.songName.replace("<em>","").replace("</em>",""),
-                                albumName = rowMusic.albumName,
-                                duration = ResUtil.timeFormat("mm:ss", rowMusic.duration * 1000L),
-                                artistName = rowMusic.singerName.replace("<em>","").replace("</em>",""),
-                                iconPath = "",
-                                musicPath = "",
-                                lrcPath = ""
-                        )
-                    } as ArrayList<Music>
+                total = it.data.total,
+                data = it.data.lists.map { rowMusic ->
+                    Music(
+                        musicId = rowMusic.fileHash,
+                        musicName = rowMusic.songName.replace("<em>", "").replace("</em>", ""),
+                        albumName = rowMusic.albumName,
+                        duration = rowMusic.duration*1000,
+                        artistName = rowMusic.singerName.replace("<em>", "").replace("</em>", ""),
+                        iconPath = "",
+                        musicPath = "",
+                        lrcPath = "",
+                        source = Source.KG
+                    )
+                } as ArrayList<Music>
             )
         }
     }

@@ -4,6 +4,7 @@ import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
 import com.simple.module.internet.*
+import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.LyricsAnalysis
 import com.simple.tools.ResUtil
 
@@ -13,14 +14,15 @@ class BdModel : ISearchModel {
         return http.musicSearch(keyword, pageSize, page).setTransform {
             SearchMusicRes(it.result.songInfo.total, it.result.songInfo.songList!!.map { rowMusic ->
                 Music(
-                        musicId = rowMusic.songId,
-                        musicName = rowMusic.musicName+"  "+rowMusic.info,
-                        albumName = rowMusic.albumTitle,
-                        duration = ResUtil.timeFormat("mm:ss", rowMusic.duration.toInt() * 1000L),
-                        artistName = rowMusic.author,
-                        lrcPath = rowMusic.lrcLink ?: "",
-                        iconPath = rowMusic.picSmall ?: "",
-                        musicPath = ""
+                    musicId = rowMusic.songId,
+                    musicName = rowMusic.musicName + "  " + rowMusic.info,
+                    albumName = rowMusic.albumTitle,
+                    duration = rowMusic.duration.toInt()*1000,
+                    artistName = rowMusic.author,
+                    lrcPath = rowMusic.lrcLink ?: "",
+                    iconPath = rowMusic.picSmall ?: "",
+                    musicPath = "",
+                    source = Source.BD
                 )
             } as ArrayList<Music>)
         }

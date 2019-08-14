@@ -28,8 +28,8 @@ fun <T> Call<T>.observer(success: (T) -> Unit, error: ((code: Int) -> Unit)? = n
  * 监听转换后的数据
  */
 fun <T> Transform<T>.observer(ok: (T) -> Unit, error: ((code: Int) -> Unit)? = null) {
-    if (success) {
-        ok(data!!)
+    if (success&&data!=null) {
+        ok(data)
     } else {
         error?.invoke(code)
     }

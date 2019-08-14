@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/nav_mainFragment"
+    android:id="@+id/navigation">
+    <fragment android:id="@+id/nav_mainFragment"
+        android:name="com.simple.module.main.MainFragment"
+        tools:layout="@layout/fragment_local_music"
+        >
+        <action android:id="@+id/action_gotToSearchResult" app:destination="@id/nav_searchResult"/>
+    </fragment>
+    <fragment android:id="@+id/nav_searchResult"
+        android:name="com.simple.module.search.searchResult.SearchResultFragment"
+        tools:layout="@layout/fragment_search_result">
+    </fragment>
+
+</navigation>

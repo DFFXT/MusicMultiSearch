@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
+import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 
 class PlayerObserverManager {
@@ -24,30 +25,40 @@ class PlayerObserverManager {
 
     fun dispatchLoad(music: Music) {
         for (observer in observerMap) {
-            observer.value.load(music)
+            observer.value.onMusicLoad(music)
         }
     }
 
     fun dispatchLyricsLoad(lyrics: List<Lyrics>) {
         for (observer in observerMap) {
-            observer.value.lyricsLoad(lyrics)
+            observer.value.onLyricsLoad(lyrics)
         }
     }
 
     fun dispatchBufferUpdate(progress: Int) {
         for (observer in observerMap) {
-            observer.value.bufferUpdate(progress)
+            observer.value.onBufferUpdate(progress)
         }
     }
 
     fun dispatchListChange(list: List<Music>) {
         for (observer in observerMap) {
-            observer.value.listChange(list)
+            observer.value.onListChange(list)
         }
     }
     fun dispatchStatus(isPlaying:Boolean){
         for (observer in observerMap) {
-            observer.value.status(isPlaying)
+            observer.value.onStatusChange(isPlaying)
+        }
+    }
+    fun dispatchPlayType(playType: PlayType){
+        for (observer in observerMap) {
+            observer.value.onPlayTypeChange(playType)
+        }
+    }
+    fun dispatchTimeChange(time:Int,duration:Int){
+        for (observer in observerMap) {
+            observer.value.onTimeChange(time,duration)
         }
     }
 

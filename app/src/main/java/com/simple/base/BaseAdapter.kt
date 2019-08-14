@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>() {
     var data = ArrayList<T>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        return BaseViewHolder(parent.inflate(getLayout(viewType)))
+        return BaseViewHolder(parent.inflate(getLayout(viewType)),viewType)
     }
 
     override fun getItemCount(): Int = data.size
@@ -40,7 +40,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>() {
 }
 
 
-class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class BaseViewHolder(itemView: View,val type:Int=0) : RecyclerView.ViewHolder(itemView) {
     fun setText(@IdRes id: Int, charSequence: CharSequence): TextView {
         val tv = itemView.findViewById<TextView>(id)
         tv.text = charSequence

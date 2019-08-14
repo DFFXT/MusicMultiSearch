@@ -8,6 +8,7 @@ import com.simple.module.internet.KwApis
 import com.simple.module.internet.RetrofitPack
 import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
+import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.ResUtil
 
 class KwModel : ISearchModel {
@@ -15,19 +16,20 @@ class KwModel : ISearchModel {
     override fun search(keyword: String, page: Int, pageSize: Int): Transform<SearchMusicRes> {
         return http.search(keyword, page, pageSize).setTransform {
             return@setTransform SearchMusicRes(
-                    total = it.data.total,
-                    data = it.data.list.map { rowMusic ->
-                        Music(
-                                musicId = rowMusic.musicrid,
-                                musicName = rowMusic.name,
-                                albumName = rowMusic.album,
-                                duration = ResUtil.timeFormat("mm:ss", rowMusic.duration * 1000L),
-                                artistName = rowMusic.artist,
-                                iconPath = rowMusic.pic,
-                                musicPath = "",
-                                lrcPath = ""
-                        )
-                    } as ArrayList<Music>
+                total = it.data.total,
+                data = it.data.list.map { rowMusic ->
+                    Music(
+                        musicId = rowMusic.musicrid,
+                        musicName = rowMusic.name,
+                        albumName = rowMusic.album,
+                        duration = rowMusic.duration*1000,
+                        artistName = rowMusic.artist,
+                        iconPath = rowMusic.pic,
+                        musicPath = "",
+                        lrcPath = "",
+                        source = Source.KW
+                    )
+                } as ArrayList<Music>
             )
         }
     }

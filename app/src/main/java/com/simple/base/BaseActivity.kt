@@ -1,14 +1,10 @@
 package com.simple.base
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.OnApplyWindowInsetsListener
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.simple.tools.WindowUtil
 
-abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
+abstract class BaseActivity : AppCompatActivity() {
 
     var topInset = 0
     var bottomInset = 0
@@ -22,7 +18,12 @@ abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
         }
         beforeView()
         initView(savedInstanceState)
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView, this)
+        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+            topInset = windowInsets.systemWindowInsetTop
+            bottomInset = windowInsets.systemWindowInsetBottom
+            onInset()
+            return@setOnApplyWindowInsetsListener view.onApplyWindowInsets(windowInsets)
+        }
     }
 
     abstract fun layoutId(): Int
@@ -32,9 +33,7 @@ abstract class BaseActivity : AppCompatActivity(), OnApplyWindowInsetsListener {
 
     }
 
-    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
-        topInset = insets.systemWindowInsetTop
-        bottomInset = insets.systemWindowInsetBottom
-        return ViewCompat.onApplyWindowInsets(v, insets)
+    open fun onInset() {
+
     }
 }
