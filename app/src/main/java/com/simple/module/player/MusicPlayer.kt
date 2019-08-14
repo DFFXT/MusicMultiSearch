@@ -31,7 +31,7 @@ class MusicPlayer : Service() {
             observerManager.dispatchStatus(false)
             when (playType) {
                 PlayType.ALL_CYCLE -> {
-                    //operationImp.next()
+                    operationImp.next()
                 }
                 PlayType.ONE_CYCLE -> {
                     operationImp.start()
@@ -44,21 +44,19 @@ class MusicPlayer : Service() {
         }
         player.setOnPreparedListener {
             playerOK = true
+            val music = linkedList.getCurrent()
+            music.duration = operationImp.getDuration()
+            //observerManager.dispatchLoad(music)
             if (!autoPlay) {
                 autoPlay = true
                 return@setOnPreparedListener
             }
             operationImp.start()
-            ticker.start()
-            observerManager.dispatchStatus(true)
-            val music = linkedList.getCurrent()
-            music.duration = operationImp.getDuration()
-            observerManager.dispatchLoad(music)
         }
         player.setOnBufferingUpdateListener { _, i ->
             observerManager.dispatchBufferUpdate(i)
         }
-        player.setOnErrorListener { mp, what, extra ->
+        player.setOnErrorListener { _, _, _ ->
             ticker.stop()
             playerOK = false
             player.reset()
@@ -67,6 +65,8 @@ class MusicPlayer : Service() {
 
         if (linkedList.size > 0) {
             load(linkedList.getCurrent())
+        } else {
+            autoPlay = true
         }
     }
 
@@ -76,6 +76,7 @@ class MusicPlayer : Service() {
 
     inner class PlayerOperationImp : Binder(), PlayerOperation {
         override fun toggle() {
+            if (!playerOK) return
             if (player.isPlaying) {
                 operationImp.pause()
             } else {
@@ -84,11 +85,11 @@ class MusicPlayer : Service() {
         }
 
         override fun play(music: Music) {
-            val index=linkedList.indexOf(music)
-            if(index==-1){
+            val index = linkedList.indexOf(music)
+            if (index == -1) {
                 linkedList.add(music.copy())
                 load(linkedList.getLast(true))
-            }else{
+            } else {
                 linkedList.setIndex(index)
                 load(linkedList.getCurrent())
             }
@@ -174,6 +175,7 @@ class MusicPlayer : Service() {
         player.reset()
         player.setDataSource(music.musicPath)
         player.prepareAsync()
+        observerManager.dispatchLoad(music)
     }
 
 }

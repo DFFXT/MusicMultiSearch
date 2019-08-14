@@ -52,7 +52,7 @@ class KwModel : ISearchModel {
     }
 
     override fun requestPath(musicId: String): Transform<String> {
-        return http.requestPath(subId(musicId)).setTransform {
+        return http.requestPath(subId(musicId),System.currentTimeMillis()).setTransform {
             return@setTransform it.url
         }
     }

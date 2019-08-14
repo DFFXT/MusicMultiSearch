@@ -14,7 +14,7 @@ interface KwApis {
     @GET("http://m.kuwo.cn/newh5/singles/songinfoandlrc")
     fun requestInfo(@Query("musicId") musicId: String): Call<KwMusicInfoRes>
 
-    @GET("http://www.kuwo.cn/url?format=mp3&rid=1691032&response=url&type=convert_url3&br=256kmp3&from=web&t=1564648018451")
-    fun requestPath(@Query("rid") musicId: String):Call<KwMusicPathRes>
+    @GET("http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=256kmp3&from=web&t=1564648018451")
+    fun requestPath(@Query("rid") musicId: String,@Query("t") time:Long):Call<KwMusicPathRes>
 
 }
