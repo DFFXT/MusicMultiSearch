@@ -15,6 +15,7 @@ interface PlayerOperation {
     fun start()
     fun seekTo(time: Int)
     fun addToNext(music: Music)
+    fun remove(index:Int)
     fun getCurrentTime(): Int
     fun getDuration(): Int
     fun getPlayType(): PlayType
@@ -31,4 +32,7 @@ interface LinkedListI<T> : List<T>, Serializable {
     fun random(): T
     fun getIndex(): Int
     fun reset()
+    fun addAll(elements:Iterable<T>)
+    fun clear()
+    fun remove(index:Int)
 }

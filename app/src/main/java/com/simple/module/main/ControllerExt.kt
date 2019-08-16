@@ -6,10 +6,14 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.simple.R
 import com.simple.bean.Music
+import com.simple.module.download.service.getAbsolutePicPath
+import com.simple.module.download.service.getBaseName
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.tools.ImageLoad
+import com.simple.tools.MediaStoreUtil
 import com.simple.tools.ResUtil
+import com.simple.view.RoundImageView
 
 fun ControllerActivity.Companion.nextPlayType(currentPlayType: PlayType): PlayType {
     return when (currentPlayType) {
@@ -29,7 +33,7 @@ fun ControllerActivity.getObserver(): PlayerObserver {
         private val tvMusicName = bottomController.findViewById<TextView>(R.id.tv_musicName)
         private val tvArtistName = bottomController.findViewById<TextView>(R.id.tv_artist)
         private val ivArtistIcon = bottomController.findViewById<ImageView>(R.id.iv_singerIcon)
-        private val ivPlayStatus = bottomController.findViewById<ImageView>(R.id.iv_pause)
+        private val ivPlayStatus = bottomController.findViewById<RoundImageView>(R.id.iv_pause)
         private val ivPlayType = bottomController.findViewById<ImageView>(R.id.iv_playType)
         private val seekBar = bottomController.findViewById<SeekBar>(R.id.bar)
         private var seekBarTouch=false
@@ -69,7 +73,13 @@ fun ControllerActivity.getObserver(): PlayerObserver {
             tvLeftTime.setText(R.string.time_0)
             tvRightTime.text = ResUtil.timeFormat("mm:ss", music.duration.toLong())
             seekBar.max = music.duration
-            ImageLoad.load(music.iconPath).into(ivArtistIcon)
+            if(music.iconPath.isEmpty()){
+                //val uri=MediaStoreUtil.getImageUri(music.getBaseName())
+                ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
+            }else{
+                ImageLoad.load(music.iconPath).into(ivArtistIcon)
+            }
+
         }
 
         override fun onTimeChange(time: Int, duration: Int) {
@@ -84,8 +94,8 @@ fun ControllerActivity.getObserver(): PlayerObserver {
             ivPlayType.setImageResource(type.drawable)
         }
 
-        override fun onStatusChange(isPlaying: Boolean) {
-            ivPlayStatus.setImageResource(if (isPlaying) R.drawable.icon_play_black else R.drawable.icon_pause_black)
+        override fun onStatusChange(isPlaying: Boolean,isLoading:Boolean) {
+            ivPlayStatus.setImageResource(if (isPlaying||isLoading) R.drawable.icon_play_black else R.drawable.icon_pause_black)
         }
     }
 }

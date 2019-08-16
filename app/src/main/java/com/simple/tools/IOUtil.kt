@@ -19,14 +19,16 @@ object IOUtil {
     @JvmStatic
     @WorkerThread
     fun streamCopy(
-        inputStream: InputStream,
-        outputStream: OutputStream,
+        inputStream: InputStream?,
+        outputStream: OutputStream?,
         max: Int? = -1,
         progressCallBack: ((progress: Int, length: Int?) -> Unit)? = null,
         notifyTimeGap: Long = -1,
         stopCallback: ((complete: Boolean) -> Unit)? = null,
         stop: AtomicBoolean = AtomicBoolean(false)
     ): Int {
+        inputStream?:return 0
+        outputStream?:return 0
         var offset = 0
         var update = false
         var job: Job? = null

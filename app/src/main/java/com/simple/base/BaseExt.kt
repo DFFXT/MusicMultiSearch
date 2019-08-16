@@ -6,6 +6,11 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import okhttp3.ResponseBody
+import java.io.IOException
 
 fun View.visibleOrInVisible(visible: Boolean) {
     if (visible) {
@@ -52,6 +57,27 @@ fun TabLayout.combineWithViewPager2(vp2:ViewPager2,title:List<String>){
 
         override fun onPageSelected(position: Int) {
             setScrollPosition(position,0f,false)
+        }
+    })
+}
+
+
+fun String?.ifNullOrBlank(candidateString:String):String{
+    return if(this.isNullOrBlank()) candidateString else this
+}
+fun String?.ifNotNullOrBlank(candidateString:String):String?{
+    return if(this.isNullOrBlank()) this else candidateString
+}
+
+
+fun Call.enquen(ok:(ResponseBody?)->Unit,error:((IOException)->Unit)?=null){
+    enqueue(object :Callback{
+        override fun onFailure(call: Call, e: IOException) {
+            error?.invoke(e)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            ok(response.body())
         }
     })
 }

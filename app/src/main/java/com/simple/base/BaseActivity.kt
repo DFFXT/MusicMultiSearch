@@ -26,6 +26,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+
     abstract fun layoutId(): Int
     abstract fun initView(savedInstanceState: Bundle?)
 
@@ -35,5 +36,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     open fun onInset() {
 
+    }
+
+    companion object {
+        const val REQUEST_CODE_PERMISSION = 123
     }
 }

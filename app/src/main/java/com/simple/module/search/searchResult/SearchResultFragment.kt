@@ -37,7 +37,7 @@ class SearchResultFragment : BaseNavFragment() {
         }
         holder.itemView.setOnClickListener {
 
-            vm.requestFull(item) {
+            vm.requestFull(item,true) {
                 ControllerActivity.op?.play(item)
             }
         }

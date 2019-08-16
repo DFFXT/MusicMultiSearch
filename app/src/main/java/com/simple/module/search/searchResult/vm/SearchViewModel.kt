@@ -63,7 +63,7 @@ class SearchViewModel : BaseViewModel() {
         }
     }
 
-    fun requestFull(music: Music, callback: (Music) -> Unit) {
+    fun requestFull(music: Music,lrc:Boolean=false, callback: (Music) -> Unit) {
         launch(Dispatchers.IO) {
             if (music.iconPath.isEmpty()) {
                 music.iconPath = mRequestPic(music.musicId)
@@ -71,7 +71,10 @@ class SearchViewModel : BaseViewModel() {
             if (music.musicPath.isEmpty()) {
                 music.musicPath = mRequestPath(music.musicId)
             }
-            withContext(coroutineContext) {
+            if(lrc&&music.lrc.isNullOrEmpty()){
+                music.lrc=mRequestLrc(music.musicId)
+            }
+            withContext(Dispatchers.Main) {
                 callback(music)
             }
         }

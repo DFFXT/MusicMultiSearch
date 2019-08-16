@@ -23,6 +23,7 @@
     <string name="addToNextPlay">下一首播放</string>
     <string name="musicExist">歌曲文件已存在</string>
     <string name="musicCount">（%d首）</string>
+    <string name="unknownArtist">位置歌手</string>
 
 
 </resources>

@@ -10,7 +10,6 @@ import com.simple.module.internet.error.ErrorCode
 import com.simple.module.internet.setTransform
 import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.LyricsAnalysis
-import com.simple.tools.ResUtil
 import java.util.regex.Pattern
 
 /**
@@ -32,7 +31,7 @@ class QqModel : ISearchModel {
                     duration = row.duration*1000,
                     artistName = artist,
                     iconPath = "",
-                    lrcPath = "",
+                    lrc = null,
                     musicPath = "",
                     source = Source.QQ
                 )

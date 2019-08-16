@@ -6,12 +6,16 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.LifecycleOwner
+import com.simple.base.MyApplication
 import com.simple.bean.Music
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
+import com.simple.tools.MediaStoreUtil
 import com.simple.tools.Ticker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 class MusicPlayer : Service() {
@@ -20,13 +24,19 @@ class MusicPlayer : Service() {
     private var playType = PlayType.ALL_CYCLE
     private var player: MediaPlayer = MediaPlayer()
     private var operationImp = PlayerOperationImp()
-    private var playerOK = false
+    private var playerPrepared = false
     private var autoPlay = false
     private val ticker = Ticker(500, 0, Dispatchers.Main) {
         observerManager.dispatchTimeChange(operationImp.getCurrentTime(), operationImp.getDuration())
     }
 
     init {
+        MediaStoreUtil.queryFiles()
+        MediaStoreUtil.queryAudio{
+            linkedList.clear()
+            linkedList.addAll(it)
+        }
+
         player.setOnCompletionListener {
             observerManager.dispatchStatus(false)
             when (playType) {
@@ -43,10 +53,10 @@ class MusicPlayer : Service() {
             }
         }
         player.setOnPreparedListener {
-            playerOK = true
+            playerPrepared = true
             val music = linkedList.getCurrent()
             music.duration = operationImp.getDuration()
-            //observerManager.dispatchLoad(music)
+            observerManager.dispatchLoad(music)
             if (!autoPlay) {
                 autoPlay = true
                 return@setOnPreparedListener
@@ -58,7 +68,7 @@ class MusicPlayer : Service() {
         }
         player.setOnErrorListener { _, _, _ ->
             ticker.stop()
-            playerOK = false
+            playerPrepared = false
             player.reset()
             return@setOnErrorListener true
         }
@@ -76,7 +86,7 @@ class MusicPlayer : Service() {
 
     inner class PlayerOperationImp : Binder(), PlayerOperation {
         override fun toggle() {
-            if (!playerOK) return
+            if (!playerPrepared) return
             if (player.isPlaying) {
                 operationImp.pause()
             } else {
@@ -128,12 +138,23 @@ class MusicPlayer : Service() {
 
         override fun addToNext(music: Music) {
             linkedList.add(music, linkedList.getIndex() + 1)
+            observerManager.dispatchListChange(linkedList)
         }
 
-        override fun getCurrentTime(): Int = if (playerOK) player.currentPosition else 0
+        override fun remove(index: Int) {
+            if(linkedList.getIndex()==index){
+                linkedList.remove(index)
+                next()
+            }else{
+                linkedList.remove(index)
+            }
+            observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun getCurrentTime(): Int = if (playerPrepared) player.currentPosition else 0
 
         override fun getDuration(): Int {
-            return if (playerOK) player.duration else 0
+            return if (playerPrepared) player.duration else 0
         }
 
         override fun getPlayType() = playType
@@ -154,7 +175,7 @@ class MusicPlayer : Service() {
     }
 
     private fun dispatchInfo(observer: PlayerObserver) {
-        observer.onStatusChange(player.isPlaying)
+        observer.onStatusChange(player.isPlaying,false)
         if (linkedList.size > 0) {
             observer.onMusicLoad(linkedList.getCurrent())
         }
@@ -171,11 +192,18 @@ class MusicPlayer : Service() {
     }
 
     private fun load(music: Music) {
-        playerOK = false
-        player.reset()
-        player.setDataSource(music.musicPath)
-        player.prepareAsync()
-        observerManager.dispatchLoad(music)
+        playerPrepared = false
+        //observerManager.dispatchStatus(false)
+        try {
+            player.reset()
+            player.setDataSource(music.musicPath)
+            player.prepareAsync()
+            observerManager.dispatchLoad(music)
+        }catch (e:Exception){
+            e.printStackTrace()
+            operationImp.next()
+        }
+
     }
 
 }

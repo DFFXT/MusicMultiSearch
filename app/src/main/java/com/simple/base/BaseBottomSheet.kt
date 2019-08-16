@@ -7,14 +7,19 @@ import androidx.annotation.LayoutRes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-abstract class BaseBottomSheet(ctx: Context, @LayoutRes layout:Int) {
+/**
+ * 底部弹窗，具有生命周期
+ * 需要在activity onDestroy处销毁
+ */
+abstract class BaseBottomSheet(ctx: Context, @LayoutRes layout:Int):BaseLifeCycle() {
     private val sheet = BottomSheetDialog(ctx)
     private var slideListener: ((View, Float) -> Unit)? = null
     private var stateChangeListener: ((View, Int) -> Unit)? = null
-    protected val rooView=LayoutInflater.from(ctx).inflate(layout,null,false)
+    protected val rootView= LayoutInflater.from(ctx).inflate(layout,null,false)!!
 
     init {
-        sheet.setContentView(rooView)
+        sheet.setContentView(rootView)
+        state=State.INITIALIZED
     }
 
     fun setPeekHeight(peekHeight: Int) {
@@ -39,10 +44,15 @@ abstract class BaseBottomSheet(ctx: Context, @LayoutRes layout:Int) {
     }
 
     open fun show() {
+        state=State.RESUMED
         sheet.show()
     }
 
     open fun close() {
         sheet.dismiss()
+    }
+    open fun destory(){
+        close()
+        state=State.DESTROYED
     }
 }

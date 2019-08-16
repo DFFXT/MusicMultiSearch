@@ -20,6 +20,7 @@ class MainFragment : BaseNavFragment() {
             v = it
             SearchActivity.actionStart(context!! as FragmentActivity, code = 200)
         }
+        rootView.iv_test.afterDraw=LoadingDraw()
     }
 
 

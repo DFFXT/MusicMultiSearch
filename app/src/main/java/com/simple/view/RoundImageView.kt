@@ -13,7 +13,17 @@ class RoundImageView @JvmOverloads constructor(
 ) : ImageView(context, attrs, defStyleAttr) {
 
     var beforeDraw:ImageDraw?=null
+        set(value) {
+            field=value
+            value?.onAttach()
+            postInvalidate()
+        }
     var afterDraw:ImageDraw?=null
+        set(value) {
+            field=value
+            value?.onAttach()
+            postInvalidate()
+        }
     var measureListener: IOnMeasure?=null
 
     var radius=0f
@@ -69,7 +79,7 @@ class RoundImageView @JvmOverloads constructor(
     private fun setPath(){
         path.reset()
 
-        rect.set(paddingStart.toFloat(),paddingTop.toFloat(),width-paddingStart-paddingEnd.toFloat(),height-paddingTop-paddingBottom.toFloat())
+        rect.set(paddingStart.toFloat(),paddingTop.toFloat(),width-paddingEnd.toFloat(),height-paddingBottom.toFloat())
         if(type==0){
             path.addRoundRect(rect,radius,radius,Path.Direction.CW)
         }else if (type==1){

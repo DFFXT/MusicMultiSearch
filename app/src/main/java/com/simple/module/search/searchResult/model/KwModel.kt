@@ -9,7 +9,6 @@ import com.simple.module.internet.RetrofitPack
 import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
 import com.simple.module.search.searchResult.vm.Source
-import com.simple.tools.ResUtil
 
 class KwModel : ISearchModel {
     private val http = RetrofitPack.retrofit.create(KwApis::class.java)
@@ -26,7 +25,7 @@ class KwModel : ISearchModel {
                         artistName = rowMusic.artist,
                         iconPath = rowMusic.pic,
                         musicPath = "",
-                        lrcPath = "",
+                        lrc = null,
                         source = Source.KW
                     )
                 } as ArrayList<Music>

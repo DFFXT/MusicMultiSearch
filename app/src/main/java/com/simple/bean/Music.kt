@@ -10,7 +10,7 @@ data class Music(
         var duration: Int,
         var artistName: String,
         var musicPath: String,
-        var lrcPath: String,
+        var lrc: List<Lyrics>?,
         var iconPath: String,
-        var source: Source
+        var source: Source?
 ):Serializable

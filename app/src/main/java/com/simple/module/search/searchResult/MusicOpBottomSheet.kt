@@ -59,7 +59,7 @@ class MusicOpBottomSheet(ctx: Context) {
 
         })))
         data.add(MusicOp(R.drawable.icon_kw, ResUtil.getString(R.string.download), View.OnClickListener {
-            vm.requestFull(music){
+            vm.requestFull(music,true){
                 DownloadService.addTask(ctx,music)
             }
             close()

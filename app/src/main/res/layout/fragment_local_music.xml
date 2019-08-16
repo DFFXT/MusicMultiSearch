@@ -10,4 +10,11 @@
         android:text="local"
         android:fitsSystemWindows="true"
         android:background="@color/themeColor"/>
+    <com.simple.view.RoundImageView
+        android:id="@+id/iv_test"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:background="@color/colorPrimary"/>
 </FrameLayout>

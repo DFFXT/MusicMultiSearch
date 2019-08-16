@@ -7,17 +7,20 @@ import android.os.Binder
 import android.os.IBinder
 import com.simple.R
 import com.simple.base.Constant
+import com.simple.base.MyApplication
+import com.simple.base.enquen
 import com.simple.bean.Music
 import com.simple.module.download.service.downloadInterface.DownloadAction
 import com.simple.module.download.service.downloadInterface.DownloadOperation
+import com.simple.module.internet.RetrofitPack
 import com.simple.module.player.LinkedListImp
 import com.simple.tools.IOUtil
+import com.simple.tools.LyricsAnalysis
 import com.simple.tools.MToast
 import com.simple.tools.MediaStoreUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.net.URL
 import java.util.*
 
 class DownloadService : Service() {
@@ -55,23 +58,43 @@ class DownloadService : Service() {
     private fun addTaskAndStart(music: Music) {
         if (taskList.containMusic(music)) return
         taskList.add(music)
+        startTask(music)
     }
-    private fun startTask(music: Music){
+
+    private fun startTask(music: Music) {
         GlobalScope.launch(Dispatchers.IO) {
-            if(MediaStoreUtil.queryExist(music.getAbsolutePath())){
+            if (MediaStoreUtil.queryAudioExist(music.musicName, music.artistName)) {
                 MToast.showToast(R.string.musicExist)
                 return@launch
             }
-            val uri = MediaStoreUtil.createMediaFile(
+            MediaStoreUtil.createMediaFile(
                 music.musicName,
                 music.albumName,
                 music.artistName,
+                music.duration,
                 music.getFileName(),
                 Constant.Storage.DOWNLOAD_PATH
-            ) ?: return@launch
-            val out = contentResolver.openOutputStream(uri)!!
-            val con = URL(music.musicPath).openConnection().getInputStream()
-            IOUtil.streamCopy(con, out)
+            )?.let { uri ->
+                RetrofitPack.request(music.musicPath).enquen({
+                    IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
+                })
+            }
+
+
+            MediaStoreUtil.createImageUri(music.getBaseName(), "png", Constant.Storage.PIC_PATH)?.let { uri ->
+                RetrofitPack.request(music.iconPath).enquen({
+                    IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
+                })
+            }
+
+
+            if (!music.lrc.isNullOrEmpty()) {
+                MediaStoreUtil.createFileUri(music.getBaseName(), "lrc", Constant.Storage.LYRICS_PATH)?.let {
+                    MyApplication.ctx.contentResolver.openOutputStream(it)?.use { out ->
+                        out.write(LyricsAnalysis.enCode(music.lrc).toByteArray())
+                    }
+                }
+            }
         }
     }
 

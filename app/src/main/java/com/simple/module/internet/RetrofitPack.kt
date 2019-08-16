@@ -13,31 +13,30 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 object RetrofitPack {
+    val client=OkHttpClient.Builder()
+        .sslSocketFactory(getSSLFactory())
+        .cookieJar(object : CookieJar {
+            override fun saveFromResponse(url: HttpUrl, cookies: MutableList<Cookie>) {
+
+            }
+
+            override fun loadForRequest(url: HttpUrl): MutableList<Cookie> {
+                val list = ArrayList<Cookie>()
+                list.add(
+                    Cookie.Builder()
+                        .name("kg_mid")
+                        .value("b204e40c143122ac61bd7c53796e01570")
+                        .domain("wwwapi.kugou.com")
+                        .build()
+                )
+                return list
+            }
+        })
+        .build()
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("http://www.baidu.com")
-            .client(
-                OkHttpClient.Builder()
-                    .sslSocketFactory(getSSLFactory())
-                    .cookieJar(object : CookieJar {
-                        override fun saveFromResponse(url: HttpUrl, cookies: MutableList<Cookie>) {
-
-                        }
-
-                        override fun loadForRequest(url: HttpUrl): MutableList<Cookie> {
-                            val list = ArrayList<Cookie>()
-                            list.add(
-                                Cookie.Builder()
-                                    .name("kg_mid")
-                                    .value("b204e40c143122ac61bd7c53796e01570")
-                                    .domain("wwwapi.kugou.com")
-                                    .build()
-                            )
-                            return list
-                        }
-                    })
-                    .build()
-            )
+            .client(client)
             //.addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(object : Converter.Factory() {
                 override fun responseBodyConverter(
@@ -56,6 +55,9 @@ object RetrofitPack {
                 }
             })
             .build()
+    }
+    fun request(url:String):Call{
+        return client.newCall(Request.Builder().url(url).build())
     }
 
     private fun getSSLFactory(): SSLSocketFactory {

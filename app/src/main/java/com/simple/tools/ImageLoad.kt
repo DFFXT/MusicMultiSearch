@@ -2,6 +2,7 @@ package com.simple.tools
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -17,6 +18,11 @@ object ImageLoad {
     fun load(path:String?):RequestBuilder<Drawable>{
         return Glide.with(MyApplication.ctx).load(path).diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .skipMemoryCache(false).centerCrop()
+    }
+    @JvmStatic
+    fun load(uri: Uri?):RequestBuilder<Drawable>{
+        return Glide.with(MyApplication.ctx).load(uri).diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .skipMemoryCache(false).centerCrop()
     }
     @JvmStatic
     fun loadAsBitmap(path:String?):RequestBuilder<Bitmap>{

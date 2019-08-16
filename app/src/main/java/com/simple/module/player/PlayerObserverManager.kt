@@ -1,7 +1,6 @@
 package com.simple.module.player
 
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
@@ -46,22 +45,22 @@ class PlayerObserverManager {
             observer.value.onListChange(list)
         }
     }
-    fun dispatchStatus(isPlaying:Boolean){
+
+    fun dispatchStatus(isPlaying: Boolean) {
         for (observer in observerMap) {
             observer.value.onStatusChange(isPlaying)
         }
     }
-    fun dispatchPlayType(playType: PlayType){
+
+    fun dispatchPlayType(playType: PlayType) {
         for (observer in observerMap) {
             observer.value.onPlayTypeChange(playType)
         }
     }
-    fun dispatchTimeChange(time:Int,duration:Int){
+
+    fun dispatchTimeChange(time: Int, duration: Int) {
         for (observer in observerMap) {
-            observer.value.onTimeChange(time,duration)
+            observer.value.onTimeChange(time, duration)
         }
     }
-
-
-    private class ObserverCompanion(val lifecycle: Lifecycle, observer: PlayerObserver)
 }

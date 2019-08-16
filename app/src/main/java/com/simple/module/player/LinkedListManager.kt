@@ -39,7 +39,7 @@ class LinkedListImp<T>(private val list: LinkedList<T>) : LinkedListI<T>, List<T
     }
 
     fun add(element: T, index: Int = size) {
-        list.add(element)
+        list.add(index,element)
         save()
     }
 
@@ -57,6 +57,27 @@ class LinkedListImp<T>(private val list: LinkedList<T>) : LinkedListI<T>, List<T
 
     fun setIndex(index: Int){
         this.index=index
+        save()
+    }
+
+    override fun addAll(elements: Iterable<T>) {
+        list.addAll(elements)
+        save()
+    }
+
+    override fun clear() {
+        index=-1
+        list.clear()
+        save()
+    }
+
+    override fun remove(index: Int) {
+        if(index<0||index>=size)return
+        if(index<=this.index){
+            this.index-=1
+        }
+        list.removeAt(index)
+        save()
     }
 
     fun save() = save(this)

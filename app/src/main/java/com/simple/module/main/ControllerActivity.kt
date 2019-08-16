@@ -1,9 +1,11 @@
 package com.simple.module.main
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import androidx.navigation.findNavController
@@ -14,6 +16,7 @@ import com.simple.module.player.MusicPlayer
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
+import com.simple.tools.MediaStoreUtil
 
 class ControllerActivity : BaseActivity() {
     override fun layoutId() = R.layout.activity_controller
@@ -34,6 +37,19 @@ class ControllerActivity : BaseActivity() {
 
     override fun initView(savedInstanceState: Bundle?) {
         bindService(Intent(this, MusicPlayer::class.java), connection, Context.BIND_AUTO_CREATE)
+        MediaStoreUtil.requestPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode== REQUEST_CODE_PERMISSION){
+            for(res in grantResults){
+                if(res==PackageManager.PERMISSION_DENIED){
+                    finish()
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
