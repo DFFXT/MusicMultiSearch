@@ -7,11 +7,10 @@ import android.widget.TextView
 import com.simple.R
 import com.simple.bean.Music
 import com.simple.module.download.service.getAbsolutePicPath
-import com.simple.module.download.service.getBaseName
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
+import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.tools.ImageLoad
-import com.simple.tools.MediaStoreUtil
 import com.simple.tools.ResUtil
 import com.simple.view.RoundImageView
 
@@ -23,45 +22,46 @@ fun ControllerActivity.Companion.nextPlayType(currentPlayType: PlayType): PlayTy
     }
 }
 
-fun ControllerActivity.getObserver(): PlayerObserver {
-    val ctx=this
+fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObserver {
+    val ctx = this
     return object : PlayerObserver() {
-        private val tmpListSheet:TmpListBottomSheet by lazy { TmpListBottomSheet(ctx) }
+        private val tmpListSheet: TmpListBottomSheet by lazy { TmpListBottomSheet(ctx, playerOperation) }
         private val bottomController = findViewById<ViewGroup>(R.id.bottom_controller)
         private val tvLeftTime = bottomController.findViewById<TextView>(R.id.tv_currentTime)
         private val tvRightTime = bottomController.findViewById<TextView>(R.id.tv_duration)
         private val tvMusicName = bottomController.findViewById<TextView>(R.id.tv_musicName)
-        private val tvArtistName = bottomController.findViewById<TextView>(R.id.tv_artist)
+        private val tvArtistName = bottomController.findViewById<TextView>(R.id.tv_artistName)
         private val ivArtistIcon = bottomController.findViewById<ImageView>(R.id.iv_singerIcon)
         private val ivPlayStatus = bottomController.findViewById<RoundImageView>(R.id.iv_pause)
         private val ivPlayType = bottomController.findViewById<ImageView>(R.id.iv_playType)
         private val seekBar = bottomController.findViewById<SeekBar>(R.id.bar)
-        private var seekBarTouch=false
+        private var seekBarTouch = false
+
         init {
             ivPlayStatus.setOnClickListener {
-                ControllerActivity.op?.toggle()
+                playerOperation?.toggle()
             }
             bottomController.findViewById<ImageView>(R.id.iv_next).setOnClickListener {
-                ControllerActivity.op?.next()
+                playerOperation?.next()
             }
             ivPlayType.setOnClickListener {
-                ControllerActivity.op?.changePlayType(ControllerActivity.nextPlayType(playType))
+                playerOperation?.changePlayType(ControllerActivity.nextPlayType(playType))
             }
             bottomController.findViewById<ImageView>(R.id.iv_tmpList).setOnClickListener {
                 tmpListSheet.show()
             }
-            seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    seekBarTouch=true
+                    seekBarTouch = true
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    seekBarTouch=false
-                    ControllerActivity.op?.seekTo(seekBar.progress)
+                    seekBarTouch = false
+                    playerOperation?.seekTo(seekBar.progress)
                 }
             })
 
@@ -73,10 +73,10 @@ fun ControllerActivity.getObserver(): PlayerObserver {
             tvLeftTime.setText(R.string.time_0)
             tvRightTime.text = ResUtil.timeFormat("mm:ss", music.duration.toLong())
             seekBar.max = music.duration
-            if(music.iconPath.isEmpty()){
+            if (music.iconPath.isEmpty()) {
                 //val uri=MediaStoreUtil.getImageUri(music.getBaseName())
                 ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
-            }else{
+            } else {
                 ImageLoad.load(music.iconPath).into(ivArtistIcon)
             }
 
@@ -84,7 +84,7 @@ fun ControllerActivity.getObserver(): PlayerObserver {
 
         override fun onTimeChange(time: Int, duration: Int) {
             tvLeftTime.text = ResUtil.timeFormat("mm:ss", time.toLong())
-            if(seekBarTouch)return
+            if (seekBarTouch) return
             seekBar.progress = time
 
         }
@@ -94,8 +94,8 @@ fun ControllerActivity.getObserver(): PlayerObserver {
             ivPlayType.setImageResource(type.drawable)
         }
 
-        override fun onStatusChange(isPlaying: Boolean,isLoading:Boolean) {
-            ivPlayStatus.setImageResource(if (isPlaying||isLoading) R.drawable.icon_play_black else R.drawable.icon_pause_black)
+        override fun onStatusChange(isPlaying: Boolean, isLoading: Boolean) {
+            ivPlayStatus.setImageResource(if (isPlaying || isLoading) R.drawable.icon_play_black else R.drawable.icon_pause_black)
         }
     }
 }

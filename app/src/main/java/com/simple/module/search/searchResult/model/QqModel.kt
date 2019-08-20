@@ -58,7 +58,7 @@ class QqModel : ISearchModel {
      * 还未找到获取pic的方法
      */
     override fun requestPic(musicId: String): Transform<String> {
-        return Transform(true, ErrorCode.CODE_OK, "")
+        return Transform(true, null, "")
     }
 
     override fun requestPath(musicId: String): Transform<String> {

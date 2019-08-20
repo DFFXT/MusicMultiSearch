@@ -8,7 +8,7 @@ import android.os.IBinder
 import com.simple.R
 import com.simple.base.Constant
 import com.simple.base.MyApplication
-import com.simple.base.enquen
+import com.simple.base.enqueue
 import com.simple.bean.Music
 import com.simple.module.download.service.downloadInterface.DownloadAction
 import com.simple.module.download.service.downloadInterface.DownloadOperation
@@ -75,14 +75,14 @@ class DownloadService : Service() {
                 music.getFileName(),
                 Constant.Storage.DOWNLOAD_PATH
             )?.let { uri ->
-                RetrofitPack.request(music.musicPath).enquen({
+                RetrofitPack.request(music.musicPath).enqueue({
                     IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
                 })
             }
 
 
             MediaStoreUtil.createImageUri(music.getBaseName(), "png", Constant.Storage.PIC_PATH)?.let { uri ->
-                RetrofitPack.request(music.iconPath).enquen({
+                RetrofitPack.request(music.iconPath).enqueue({
                     IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
                 })
             }

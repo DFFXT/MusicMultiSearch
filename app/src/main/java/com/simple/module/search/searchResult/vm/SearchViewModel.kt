@@ -37,7 +37,9 @@ class SearchViewModel : BaseViewModel() {
     val liveLrc = MutableLiveData<List<Lyrics>>()
     val livePic = MutableLiveData<String>()
     val livePath = MutableLiveData<String>()
-    private var page = 1
+    val status = MutableLiveData<com.simple.module.internet.error.Error?>()
+    var page = 1
+    private set
     private var pageSize = 20
     private var keyword = ""
 
@@ -59,6 +61,8 @@ class SearchViewModel : BaseViewModel() {
                 searchResultList.data.addAll(searchMusicRes.data)
                 searchMusicRes.total = searchMusicRes.total
                 liveSearch.postValue(searchResultList)
+            },{
+                status.postValue(it)
             })
         }
     }

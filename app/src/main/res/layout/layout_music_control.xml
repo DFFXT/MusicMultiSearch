@@ -128,7 +128,7 @@
         tools:text="Name"/>
 
     <TextView
-        android:id="@+id/tv_artist"
+        android:id="@+id/tv_artistName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_musicName"

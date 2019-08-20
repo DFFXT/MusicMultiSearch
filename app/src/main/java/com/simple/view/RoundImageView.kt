@@ -2,11 +2,14 @@ package com.simple.view
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.widget.ImageView
 import com.simple.R
+import java.lang.Exception
+import java.lang.RuntimeException
 
 class RoundImageView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -46,7 +49,9 @@ class RoundImageView @JvmOverloads constructor(
             val measure=at.getString(R.styleable.RoundImageView_measure)
             if(measure!=null){
                 measureListener=Class.forName(measure).newInstance() as IOnMeasure
-
+            }
+            if(at.hasValue(R.styleable.RoundImageView_iv_afterDraw)){
+                afterDraw=Class.forName(at.getString(R.styleable.RoundImageView_iv_afterDraw)?:throw Exception("iv_afterDraw need a class fullName")) as ImageDraw
             }
             at.recycle()
         }

@@ -1,7 +1,6 @@
 package com.simple.module.main
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.R
@@ -13,6 +12,7 @@ import com.simple.module.download.service.DownloadService
 import com.simple.module.download.service.isInternetMusic
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
+import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.tools.ResUtil
 import com.simple.tools.WindowUtil
 import kotlinx.android.synthetic.main.layout_tmp_list.view.*
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.layout_tmp_list.view.*
 /**
  * 播放列表弹窗
  */
-class TmpListBottomSheet(ctx: Context) : BaseBottomSheet(ctx, R.layout.layout_tmp_list) {
+class TmpListBottomSheet(ctx: Context,private val op:PlayerOperation?) : BaseBottomSheet(ctx, R.layout.layout_tmp_list) {
     private lateinit var playType: PlayType
     private lateinit var currentMusic: Music
     private val observer = object : PlayerObserver() {
@@ -58,19 +58,22 @@ class TmpListBottomSheet(ctx: Context) : BaseBottomSheet(ctx, R.layout.layout_tm
             holder.itemView.setOnClickListener(null)
         }else{
             holder.itemView.setOnClickListener {
-                ControllerActivity.op?.play(item)
+                op?.play(item)
                 close()
             }
         }
 
         holder.findView<View>(R.id.iv_delete).setOnClickListener {
-            ControllerActivity.op?.remove(position)
+            op?.remove(position)
         }
     }
 
     init {
         rootView.iv_playType.setOnClickListener {
-            ControllerActivity.op?.changePlayType(ControllerActivity.nextPlayType(playType))
+            op?.changePlayType(ControllerActivity.nextPlayType(playType))
+        }
+        rootView.iv_deleteAll.setOnClickListener {
+            op?.removeAll()
         }
         rootView.rv_tmpList.layoutManager = LinearLayoutManager(ctx)
         rootView.rv_tmpList.adapter = adapter
@@ -78,12 +81,12 @@ class TmpListBottomSheet(ctx: Context) : BaseBottomSheet(ctx, R.layout.layout_tm
         val lp=rootView.layoutParams
         lp.height=WindowUtil.screenHeight()/2
         rootView.layoutParams=lp
-        ControllerActivity.op?.addObserver(this, observer)
+        op?.addObserver(this, observer)
     }
 
     override fun show() {
         adapter.notifyDataSetChanged()
-        rootView.rv_tmpList.scrollToPosition(ControllerActivity.op?.getIndex()?:0)
+        rootView.rv_tmpList.scrollToPosition(op?.getIndex()?:0)
         super.show()
     }
 }

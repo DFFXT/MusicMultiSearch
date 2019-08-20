@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="loadingListenerId">1</integer>
+    <integer name="loadingViewId">2</integer>
+    <integer name="errorViewId">3</integer>
+    <integer name="errorListenerId">5</integer>
+</resources>

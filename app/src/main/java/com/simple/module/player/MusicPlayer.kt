@@ -6,16 +6,12 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.LifecycleOwner
-import com.simple.base.MyApplication
 import com.simple.bean.Music
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
-import com.simple.tools.MediaStoreUtil
 import com.simple.tools.Ticker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.*
 
 class MusicPlayer : Service() {
@@ -31,11 +27,6 @@ class MusicPlayer : Service() {
     }
 
     init {
-        MediaStoreUtil.queryFiles()
-        MediaStoreUtil.queryAudio{
-            linkedList.clear()
-            linkedList.addAll(it)
-        }
 
         player.setOnCompletionListener {
             observerManager.dispatchStatus(false)
@@ -103,7 +94,15 @@ class MusicPlayer : Service() {
                 linkedList.setIndex(index)
                 load(linkedList.getCurrent())
             }
+        }
 
+        override fun play(index: Int) {
+            if (linkedList.getIndex() == index) {
+                toggle()
+            } else {
+                linkedList.setIndex(index)
+                load(linkedList.getCurrent())
+            }
         }
 
         override fun next() {
@@ -141,14 +140,30 @@ class MusicPlayer : Service() {
             observerManager.dispatchListChange(linkedList)
         }
 
+        override fun addAll(data: List<Music>) {
+            linkedList.clear()
+            linkedList.addAll(data)
+            observerManager.dispatchListChange(linkedList)
+        }
+
         override fun remove(index: Int) {
-            if(linkedList.getIndex()==index){
+            if (linkedList.getIndex() == index) {
                 linkedList.remove(index)
                 next()
-            }else{
+            } else {
                 linkedList.remove(index)
             }
             observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun removeAll() {
+            linkedList.clear()
+            reset()
+            observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun delete(music: Music) {
+
         }
 
         override fun getCurrentTime(): Int = if (playerPrepared) player.currentPosition else 0
@@ -175,7 +190,7 @@ class MusicPlayer : Service() {
     }
 
     private fun dispatchInfo(observer: PlayerObserver) {
-        observer.onStatusChange(player.isPlaying,false)
+        observer.onStatusChange(player.isPlaying, false)
         if (linkedList.size > 0) {
             observer.onMusicLoad(linkedList.getCurrent())
         }
@@ -184,26 +199,31 @@ class MusicPlayer : Service() {
         observer.onListChange(linkedList)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        ticker.stop()
-        player.release()
-        linkedList.save()
+
+    private fun reset() {
+        player.reset()
+        observerManager.dispatchLoad(Music("", "", "", 0, "", "", null, "", null))
     }
 
     private fun load(music: Music) {
         playerPrepared = false
-        //observerManager.dispatchStatus(false)
         try {
             player.reset()
             player.setDataSource(music.musicPath)
             player.prepareAsync()
             observerManager.dispatchLoad(music)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             operationImp.next()
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ticker.stop()
+        player.release()
+        linkedList.save()
     }
 
 }
