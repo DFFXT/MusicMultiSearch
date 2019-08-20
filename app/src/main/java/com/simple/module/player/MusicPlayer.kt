@@ -6,10 +6,14 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.LifecycleOwner
+import com.simple.R
+import com.simple.base.MyApplication
 import com.simple.bean.Music
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
+import com.simple.tools.MToast
+import com.simple.tools.MediaStoreUtil
 import com.simple.tools.Ticker
 import kotlinx.coroutines.Dispatchers
 import java.util.*
@@ -205,16 +209,24 @@ class MusicPlayer : Service() {
         observerManager.dispatchLoad(Music("", "", "", 0, "", "", null, "", null))
     }
 
+
+    /**
+     * 本地音乐需要通过id构建uri来播放
+     */
     private fun load(music: Music) {
         playerPrepared = false
         try {
             player.reset()
-            player.setDataSource(music.musicPath)
+            if (music.source == null) {
+                player.setDataSource(MyApplication.ctx, MediaStoreUtil.getAudioUri(music.musicId), null)
+            } else {
+                player.setDataSource(music.musicPath)
+            }
             player.prepareAsync()
             observerManager.dispatchLoad(music)
         } catch (e: Exception) {
             e.printStackTrace()
-            operationImp.next()
+            MToast.showToast(R.string.loadError)
         }
 
     }

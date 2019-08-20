@@ -5,7 +5,6 @@ import com.simple.base.BaseViewModel
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
-import com.simple.module.internet.observer
 import com.simple.module.search.searchResult.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +38,7 @@ class SearchViewModel : BaseViewModel() {
     val livePath = MutableLiveData<String>()
     val status = MutableLiveData<com.simple.module.internet.error.Error?>()
     var page = 1
-    private set
+        private set
     private var pageSize = 20
     private var keyword = ""
 
@@ -56,18 +55,21 @@ class SearchViewModel : BaseViewModel() {
             this.keyword = keyword
         }
         launch(Dispatchers.IO) {
-            model.search(keyword, page, pageSize).observer({ searchMusicRes ->
-                page++
-                searchResultList.data.addAll(searchMusicRes.data)
-                searchMusicRes.total = searchMusicRes.total
-                liveSearch.postValue(searchResultList)
-            },{
-                status.postValue(it)
-            })
+            model.search(keyword, page, pageSize).observer {
+                ok { searchMusicRes ->
+                    page++
+                    searchResultList.data.addAll(searchMusicRes.data)
+                    searchMusicRes.total = searchMusicRes.total
+                    liveSearch.postValue(searchResultList)
+                }
+                err {
+                    status.postValue(it)
+                }
+            }
         }
     }
 
-    fun requestFull(music: Music,lrc:Boolean=false, callback: (Music) -> Unit) {
+    fun requestFull(music: Music, lrc: Boolean = false, callback: (Music) -> Unit) {
         launch(Dispatchers.IO) {
             if (music.iconPath.isEmpty()) {
                 music.iconPath = mRequestPic(music.musicId)
@@ -75,8 +77,8 @@ class SearchViewModel : BaseViewModel() {
             if (music.musicPath.isEmpty()) {
                 music.musicPath = mRequestPath(music.musicId)
             }
-            if(lrc&&music.lrc.isNullOrEmpty()){
-                music.lrc=mRequestLrc(music.musicId)
+            if (lrc && music.lrc.isNullOrEmpty()) {
+                music.lrc = mRequestLrc(music.musicId)
             }
             withContext(Dispatchers.Main) {
                 callback(music)
@@ -88,9 +90,11 @@ class SearchViewModel : BaseViewModel() {
 
     fun requestLrc(id: String) {
         launch(Dispatchers.IO) {
-            model.requestLrc(id).observer({
-                liveLrc.postValue(it)
-            })
+            model.requestLrc(id).observer {
+                ok {
+                    liveLrc.postValue(it)
+                }
+            }
         }
     }
 
@@ -106,9 +110,9 @@ class SearchViewModel : BaseViewModel() {
 
     private fun mRequestPic(id: String): String {
         var res = ""
-        model.requestPic(id).observer({
-            res = it
-        })
+        model.requestPic(id).observer {
+            ok { res = it }
+        }
         return res
     }
 
@@ -120,9 +124,9 @@ class SearchViewModel : BaseViewModel() {
 
     private fun mRequestPath(id: String): String {
         var res = ""
-        model.requestPath(id).observer({
-            res = it
-        })
+        model.requestPath(id).observer {
+            ok { res = it }
+        }
         return res
     }
 

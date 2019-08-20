@@ -25,17 +25,6 @@ fun <T> Call<T>.observer(success: (T) -> Unit, error: ((error: Error) -> Unit)? 
     }
 }
 
-/**
- * 监听转换后的数据
- */
-fun <T> Transform<T>.observer(ok: (T) -> Unit, err: ((e: Error?) -> Unit)? = null) {
-    if (success && data != null) {
-        ok(data)
-    } else {
-        err?.invoke(this.error)
-    }
-
-}
 
 /**
  * 转换数据

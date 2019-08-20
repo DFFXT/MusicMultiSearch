@@ -127,6 +127,14 @@ object MediaStoreUtil {
         return exist
     }
 
+    /**
+     * 根据id获取uri
+     */
+    @JvmStatic
+    fun getAudioUri(id:String):Uri{
+        return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(id).build()
+    }
+
     @JvmStatic
     fun queryAudio(callback: (List<Music>) -> Unit) {
         GlobalScope.launch(Dispatchers.IO) {
