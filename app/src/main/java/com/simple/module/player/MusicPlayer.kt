@@ -31,7 +31,6 @@ class MusicPlayer : Service() {
     }
 
     init {
-
         player.setOnCompletionListener {
             observerManager.dispatchStatus(false)
             when (playType) {

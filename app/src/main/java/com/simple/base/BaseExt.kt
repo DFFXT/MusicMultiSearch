@@ -50,7 +50,6 @@ fun TabLayout.setUpWithViewPager2(vp2:ViewPager2, title:List<String>){
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab) {
-
         }
 
         override fun onTabSelected(tab: TabLayout.Tab) {

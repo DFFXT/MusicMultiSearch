@@ -2,12 +2,14 @@ package com.simple.module.player
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.simple.base.MyApplication
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 
 class PlayerObserverManager {
+    private val notification=MyNotification(MyApplication.ctx)
     private val observerMap = HashMap<LifecycleOwner, PlayerObserver>()
     fun add(lifecycle: LifecycleOwner, observer: PlayerObserver) {
         observerMap[lifecycle] = observer
@@ -26,6 +28,7 @@ class PlayerObserverManager {
         for (observer in observerMap) {
             observer.value.onMusicLoad(music)
         }
+        notification.notifyLoadChange(music)
     }
 
     fun dispatchLyricsLoad(lyrics: List<Lyrics>) {
@@ -50,6 +53,7 @@ class PlayerObserverManager {
         for (observer in observerMap) {
             observer.value.onStatusChange(isPlaying)
         }
+        notification.notifyStatusChange(isPlaying)
     }
 
     fun dispatchPlayType(playType: PlayType) {
