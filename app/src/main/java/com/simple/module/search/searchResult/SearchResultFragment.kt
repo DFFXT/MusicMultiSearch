@@ -100,7 +100,7 @@ class SearchResultFragment : BaseNavFragment() {
         vm.search(keyword)
 
         val cvm = ViewModelProviders.of(this)[ControllerViewModel::class.java]
-        cvm.op.observe(this, Observer {
+        cvm.op.observe(context as FragmentActivity, Observer {
             op = it
         })
     }

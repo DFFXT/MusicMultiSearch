@@ -21,7 +21,7 @@ class KwModel : ISearchModel {
                         musicId = rowMusic.musicrid,
                         musicName = rowMusic.name,
                         albumName = rowMusic.album,
-                        duration = rowMusic.duration*1000,
+                        duration = rowMusic.duration * 1000,
                         artistName = rowMusic.artist,
                         iconPath = rowMusic.pic,
                         musicPath = "",
@@ -35,7 +35,7 @@ class KwModel : ISearchModel {
 
     override fun requestLrc(musicId: String): Transform<List<Lyrics>> {
         return http.requestInfo(musicId.drop("MUSIC_".length)).setTransform {
-            if (it.data == null) {
+            if (it.data == null || it.data.lrclist == null) {
                 return@setTransform arrayListOf<Lyrics>()
             }
             return@setTransform it.data.lrclist.map { rowLrc ->
@@ -51,7 +51,7 @@ class KwModel : ISearchModel {
     }
 
     override fun requestPath(musicId: String): Transform<String> {
-        return http.requestPath(subId(musicId),System.currentTimeMillis()).setTransform {
+        return http.requestPath(subId(musicId), System.currentTimeMillis()).setTransform {
             return@setTransform it.url
         }
     }

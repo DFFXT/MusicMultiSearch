@@ -5,10 +5,11 @@ import com.simple.base.BaseViewModel
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
+import com.simple.module.internet.ConcurrentRequest
 import com.simple.module.search.searchResult.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.util.*
 
 class SearchViewModel : BaseViewModel() {
     private val kwModel: KwModel by lazy { KwModel() }
@@ -70,22 +71,28 @@ class SearchViewModel : BaseViewModel() {
     }
 
     fun requestFull(music: Music, lrc: Boolean = false, callback: (Music) -> Unit) {
-        launch(Dispatchers.IO) {
-            if (music.iconPath.isEmpty()) {
-                music.iconPath = mRequestPic(music.musicId)
-            }
-            if (music.musicPath.isEmpty()) {
+        val runs = LinkedList<Runnable>()
+        if (music.musicPath.isEmpty()) {
+            runs.add(Runnable {
                 music.musicPath = mRequestPath(music.musicId)
-            }
-            if (lrc && music.lrc.isNullOrEmpty()) {
+            })
+        }
+        if (music.iconPath.isEmpty()) {
+            runs.add(Runnable {
+                music.iconPath = mRequestPic(music.musicId)
+            })
+        }
+        if (lrc && music.lrc.isNullOrEmpty()) {
+            runs.add(Runnable {
                 music.lrc = mRequestLrc(music.musicId)
-            }
-            withContext(Dispatchers.Main) {
+            })
+        }
+        ConcurrentRequest.Builder()
+            .addRequest(runs)
+            .complete {
                 callback(music)
             }
-        }
-
-
+            .request()
     }
 
     fun requestLrc(id: String) {
