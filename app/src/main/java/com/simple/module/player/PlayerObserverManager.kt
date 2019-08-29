@@ -1,5 +1,6 @@
 package com.simple.module.player
 
+import android.graphics.Bitmap
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.simple.base.MyApplication
@@ -24,9 +25,9 @@ class PlayerObserverManager {
         observerMap.remove(lifecycle)
     }
 
-    fun dispatchLoad(music: Music) {
+    fun dispatchLoad(music: Music,bitmap: Bitmap?,lyrics: ArrayList<Lyrics>?) {
         for (observer in observerMap) {
-            observer.value.onMusicLoad(music)
+            observer.value.onMusicLoad(music,bitmap,lyrics)
         }
         notification.notifyLoadChange(music)
     }

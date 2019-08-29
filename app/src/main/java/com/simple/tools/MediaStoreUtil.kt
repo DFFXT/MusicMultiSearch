@@ -88,7 +88,7 @@ object MediaStoreUtil {
         val displayName = fileName + suffix.ifNotNullOrBlank(".$suffix")
         cv.put(MediaStore.Files.FileColumns.DISPLAY_NAME, displayName)
         cv.put(MediaStore.Files.FileColumns.TITLE, fileName)
-        cv.put(MediaStore.Files.FileColumns.DATA, Environment.getExternalStorageDirectory().absolutePath + displayName)
+        cv.put(MediaStore.Files.FileColumns.DATA, Environment.getExternalStorageDirectory().absolutePath +dirPath+File.separator+ displayName)
         return MyApplication.ctx.contentResolver.insert(MediaStore.Files.getContentUri("external"), cv)
     }
 

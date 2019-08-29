@@ -58,7 +58,12 @@ public class LyricsAnalysis {
         this.lyricsList.add(line);
     }
 
-    public static String enCode(List<Lyrics> lyrics){
+    /**
+     * 歌词字符串化
+     * @param lyrics lyrics
+     * @return str
+     */
+    public static String encode(List<Lyrics> lyrics){
         StringBuilder lrc=new StringBuilder();
         for(Lyrics lyric:lyrics){
             int minute=lyric.getMillsTime()/(60*1000);

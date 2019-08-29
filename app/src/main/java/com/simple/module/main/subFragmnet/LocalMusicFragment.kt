@@ -10,7 +10,6 @@ import com.simple.base.BaseFragment
 import com.simple.base.BaseSingleAdapter
 import com.simple.bean.Music
 import com.simple.module.main.vm.ControllerViewModel
-import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.module.search.searchResult.MusicOpBottomSheet
 import com.simple.tools.MediaStoreUtil

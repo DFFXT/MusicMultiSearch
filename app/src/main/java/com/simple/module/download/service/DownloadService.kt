@@ -3,6 +3,8 @@ package com.simple.module.download.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.IBinder
 import com.simple.R
@@ -14,6 +16,8 @@ import com.simple.module.download.service.downloadInterface.DownloadAction
 import com.simple.module.download.service.downloadInterface.DownloadOperation
 import com.simple.module.internet.RetrofitPack
 import com.simple.module.player.LinkedListImp
+import com.simple.module.player.id3.FrameID
+import com.simple.module.player.id3.ID3Encode
 import com.simple.tools.IOUtil
 import com.simple.tools.LyricsAnalysis
 import com.simple.tools.MToast
@@ -67,6 +71,16 @@ class DownloadService : Service() {
                 MToast.showToast(R.string.musicExist)
                 return@launch
             }
+
+            var bitmap:Bitmap?=null
+            MediaStoreUtil.createImageUri(music.getBaseName(), "png", Constant.Storage.PIC_PATH)
+                ?.let { uri ->
+                    RetrofitPack.request(music.iconPath).execute().body()?.apply{
+                        IOUtil.streamCopy(byteStream(), contentResolver.openOutputStream(uri))
+                        bitmap=BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+                    }
+                }
+
             MediaStoreUtil.createMediaFile(
                 music.musicName,
                 music.albumName,
@@ -76,22 +90,27 @@ class DownloadService : Service() {
                 Constant.Storage.DOWNLOAD_PATH
             )?.let { uri ->
                 RetrofitPack.request(music.musicPath).enqueue({
-                    IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
+                    val out = contentResolver.openOutputStream(uri)
+                    ID3Encode()
+                        .writeBitmap(bitmap)
+                        .writeString(FrameID.TEXT,LyricsAnalysis.encode(music.lrc))
+                        .encode(out)
+                    IOUtil.streamCopy(it?.byteStream(), out)
                 })
             }
 
 
-            MediaStoreUtil.createImageUri(music.getBaseName(), "png", Constant.Storage.PIC_PATH)?.let { uri ->
-                RetrofitPack.request(music.iconPath).enqueue({
-                    IOUtil.streamCopy(it?.byteStream(), contentResolver.openOutputStream(uri))
-                })
-            }
+
 
 
             if (!music.lrc.isNullOrEmpty()) {
-                MediaStoreUtil.createFileUri(music.getBaseName(), "lrc", Constant.Storage.LYRICS_PATH)?.let {
+                MediaStoreUtil.createFileUri(
+                    music.getBaseName(),
+                    "lrc",
+                    Constant.Storage.LYRICS_PATH
+                )?.let {
                     MyApplication.ctx.contentResolver.openOutputStream(it)?.use { out ->
-                        out.write(LyricsAnalysis.enCode(music.lrc).toByteArray())
+                        out.write(LyricsAnalysis.encode(music.lrc).toByteArray())
                     }
                 }
             }

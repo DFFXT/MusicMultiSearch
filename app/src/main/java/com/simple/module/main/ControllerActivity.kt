@@ -3,6 +3,9 @@ package com.simple.module.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -12,6 +15,7 @@ import com.simple.base.BaseActivity
 import com.simple.base.BaseNavFragment
 import com.simple.module.main.vm.ControllerViewModel
 import com.simple.module.player.bean.PlayType
+import com.simple.module.player.id3.ID3Encode
 import com.simple.tools.MediaStoreUtil
 
 class ControllerActivity : BaseActivity() {
@@ -26,7 +30,6 @@ class ControllerActivity : BaseActivity() {
         })
         vm.connect(this)
         MediaStoreUtil.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

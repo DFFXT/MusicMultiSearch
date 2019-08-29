@@ -10,6 +10,7 @@ import com.simple.R
 import com.simple.base.MyApplication
 import com.simple.bean.Music
 import com.simple.module.player.bean.PlayType
+import com.simple.module.player.id3.ID3Decode
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.tools.MToast
@@ -26,8 +27,12 @@ class MusicPlayer : Service() {
     private var operationImp = PlayerOperationImp()
     private var playerPrepared = false
     private var autoPlay = false
+    private val iD3Decode = ID3Decode()
     private val ticker = Ticker(500, 0, Dispatchers.Main) {
-        observerManager.dispatchTimeChange(operationImp.getCurrentTime(), operationImp.getDuration())
+        observerManager.dispatchTimeChange(
+            operationImp.getCurrentTime(),
+            operationImp.getDuration()
+        )
     }
 
     init {
@@ -50,7 +55,7 @@ class MusicPlayer : Service() {
             playerPrepared = true
             val music = linkedList.getCurrent()
             music.duration = operationImp.getDuration()
-            observerManager.dispatchLoad(music)
+            observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
             if (!autoPlay) {
                 autoPlay = true
                 return@setOnPreparedListener
@@ -195,7 +200,7 @@ class MusicPlayer : Service() {
     private fun dispatchInfo(observer: PlayerObserver) {
         observer.onStatusChange(player.isPlaying, false)
         if (linkedList.size > 0) {
-            observer.onMusicLoad(linkedList.getCurrent())
+            observer.onMusicLoad(linkedList.getCurrent(), iD3Decode.bitmap, iD3Decode.lyrics)
         }
 
         observer.onPlayTypeChange(playType)
@@ -205,7 +210,7 @@ class MusicPlayer : Service() {
 
     private fun reset() {
         player.reset()
-        observerManager.dispatchLoad(Music("", "", "", 0, "", "", null, "", null))
+        observerManager.dispatchLoad(Music("", "", "", 0, "", "", null, "", null), null, null)
     }
 
 
@@ -217,12 +222,14 @@ class MusicPlayer : Service() {
         try {
             player.reset()
             if (music.source == null) {
-                player.setDataSource(MyApplication.ctx, MediaStoreUtil.getAudioUri(music.musicId), null)
+                val uri = MediaStoreUtil.getAudioUri(music.musicId)
+                iD3Decode.decode(uri)
+                player.setDataSource(MyApplication.ctx, uri, null)
             } else {
                 player.setDataSource(music.musicPath)
             }
             player.prepareAsync()
-            observerManager.dispatchLoad(music)
+            observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
         } catch (e: Exception) {
             e.printStackTrace()
             MToast.showToast(R.string.loadError)

@@ -1,12 +1,15 @@
 package com.simple.module.main
 
+import android.graphics.Bitmap
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.simple.R
+import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.module.download.service.getAbsolutePicPath
+import com.simple.module.player.MusicPlayer
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
@@ -67,17 +70,16 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
 
         }
 
-        override fun onMusicLoad(music: Music) {
+        override fun onMusicLoad(music: Music,bitmap: Bitmap?,lyrics: ArrayList<Lyrics>?) {
             tvMusicName.text = music.musicName
             tvArtistName.text = music.artistName
             tvLeftTime.setText(R.string.time_0)
             tvRightTime.text = ResUtil.timeFormat("mm:ss", music.duration.toLong())
             seekBar.max = music.duration
-            if (music.iconPath.isEmpty()) {
-                //val uri=MediaStoreUtil.getImageUri(music.getBaseName())
-                ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
-            } else {
-                ImageLoad.load(music.iconPath).into(ivArtistIcon)
+            when {
+                bitmap!=null -> ivArtistIcon.setImageBitmap(bitmap)
+                music.iconPath.isEmpty() -> ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
+                else -> ImageLoad.load(music.iconPath).into(ivArtistIcon)
             }
 
         }

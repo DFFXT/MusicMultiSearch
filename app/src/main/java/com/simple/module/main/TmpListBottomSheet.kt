@@ -1,12 +1,14 @@
 package com.simple.module.main
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.R
 import com.simple.base.BaseBottomSheet
 import com.simple.base.BaseSingleAdapter
 import com.simple.base.ifNullOrBlank
+import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.module.download.service.DownloadService
 import com.simple.module.download.service.isInternetMusic
@@ -24,7 +26,7 @@ class TmpListBottomSheet(ctx: Context,private val op:PlayerOperation?) : BaseBot
     private lateinit var playType: PlayType
     private lateinit var currentMusic: Music
     private val observer = object : PlayerObserver() {
-        override fun onMusicLoad(music: Music) {
+        override fun onMusicLoad(music: Music, bitmap: Bitmap?, lyrics: ArrayList<Lyrics>?) {
             currentMusic = music
         }
 

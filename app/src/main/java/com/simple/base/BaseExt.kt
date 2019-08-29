@@ -16,7 +16,11 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import okhttp3.ResponseBody
+import java.io.EOFException
 import java.io.IOException
+import java.io.InputStream
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.math.max
 
 fun View.visibleOrInVisible(visible: Boolean) {
@@ -75,6 +79,19 @@ fun String?.ifNotNullOrBlank(candidateString:String):String?{
     return if(this.isNullOrBlank()) this else candidateString
 }
 
+
+fun InputStream.read(length: Int): ByteArray? {
+    val headByte = ByteArray(length)
+    var i = 0
+    while (i < length) {
+        val readLength = this.read(headByte, i, length - i)
+        if (readLength < 0) {
+            return null
+        }
+        i += readLength
+    }
+    return headByte
+}
 
 fun Call.enqueue(ok:(ResponseBody?)->Unit, error:((IOException)->Unit)?=null){
     enqueue(object :Callback{
