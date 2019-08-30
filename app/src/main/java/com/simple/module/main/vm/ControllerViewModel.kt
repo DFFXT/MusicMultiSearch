@@ -26,6 +26,7 @@ class ControllerViewModel : BaseViewModel() {
 
     fun connect(ctx: Context) {
         this.ctx = WeakReference(ctx)
+        ctx.startService(Intent(ctx, MusicPlayer::class.java))
         ctx.bindService(Intent(ctx, MusicPlayer::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 

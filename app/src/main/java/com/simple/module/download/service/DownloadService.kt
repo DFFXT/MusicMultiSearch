@@ -25,6 +25,7 @@ import com.simple.tools.MediaStoreUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 class DownloadService : Service() {
@@ -91,11 +92,12 @@ class DownloadService : Service() {
             )?.let { uri ->
                 RetrofitPack.request(music.musicPath).enqueue({
                     val out = contentResolver.openOutputStream(uri)
-                    ID3Encode()
+
+                    IOUtil.streamCopy(it?.byteStream(), out)
+                    ID3Encode(contentResolver.openInputStream(uri))
                         .writeBitmap(bitmap)
                         .writeString(FrameID.TEXT,LyricsAnalysis.encode(music.lrc))
-                        .encode(out)
-                    IOUtil.streamCopy(it?.byteStream(), out)
+                        .encode(File(MediaStoreUtil.queryAudioPath(uri)!!))
                 })
             }
 

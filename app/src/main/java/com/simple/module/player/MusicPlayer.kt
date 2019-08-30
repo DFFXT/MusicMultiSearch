@@ -9,14 +9,21 @@ import androidx.lifecycle.LifecycleOwner
 import com.simple.R
 import com.simple.base.MyApplication
 import com.simple.bean.Music
+import com.simple.module.internet.log
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.id3.ID3Decode
+import com.simple.module.player.id3.ID3Encode
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.tools.MToast
 import com.simple.tools.MediaStoreUtil
+import com.simple.tools.ResUtil
 import com.simple.tools.Ticker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 
 class MusicPlayer : Service() {
@@ -81,6 +88,10 @@ class MusicPlayer : Service() {
 
     override fun onBind(p0: Intent?): IBinder {
         return operationImp
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_NOT_STICKY
     }
 
     inner class PlayerOperationImp : Binder(), PlayerOperation {
@@ -221,15 +232,29 @@ class MusicPlayer : Service() {
         playerPrepared = false
         try {
             player.reset()
-            if (music.source == null) {
-                val uri = MediaStoreUtil.getAudioUri(music.musicId)
-                iD3Decode.decode(uri)
-                player.setDataSource(MyApplication.ctx, uri, null)
-            } else {
-                player.setDataSource(music.musicPath)
+            GlobalScope.launch (Dispatchers.IO){
+                if (music.source == null) {
+
+                    val uri = MediaStoreUtil.getAudioUri(music.musicId)
+
+                    //ID3Encode(MyApplication.ctx.contentResolver.openInputStream(uri))
+                        //.writeFile()
+                        //.encode(File(music.musicPath))
+
+
+                    iD3Decode.decode(uri)
+                    player.setDataSource(MyApplication.ctx, uri, null)
+
+                } else {
+                    player.setDataSource(music.musicPath)
+                }
+                player.prepareAsync()
+                withContext(Dispatchers.Main){
+                    observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
+                }
+
             }
-            player.prepareAsync()
-            observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
+
         } catch (e: Exception) {
             e.printStackTrace()
             MToast.showToast(R.string.loadError)

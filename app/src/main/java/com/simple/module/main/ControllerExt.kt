@@ -9,6 +9,7 @@ import com.simple.R
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.module.download.service.getAbsolutePicPath
+import com.simple.module.lyrics.ui.LyricsActivity
 import com.simple.module.player.MusicPlayer
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
@@ -41,6 +42,9 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
         private var seekBarTouch = false
 
         init {
+            ivArtistIcon.setOnClickListener {
+                LyricsActivity.actionStart(it.context)
+            }
             ivPlayStatus.setOnClickListener {
                 playerOperation?.toggle()
             }

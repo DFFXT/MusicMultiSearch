@@ -165,7 +165,17 @@ object MediaStoreUtil {
         }
 
     }
-
+    fun queryAudioPath(uri: Uri):String?{
+        var res:String?=null
+        MyApplication.ctx.contentResolver.query(uri, null, null, null, null)
+            .use {
+                it ?: return@use
+                if (it.moveToNext()) {
+                    res=it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.DATA))
+                }
+            }
+        return res
+    }
     fun queryFiles() {
         GlobalScope.launch(Dispatchers.IO) {
             val list = LinkedList<Music>()
