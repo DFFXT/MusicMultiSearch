@@ -52,6 +52,6 @@ fun <T, R> Call<T>.setTransform(transform: (T) -> R): Transform<R> {
     return trans!!
 }
 
-fun Any?.log() {
-    Log.i("log", this.toString())
+fun Any?.log(any: Any= Any()) {
+    Log.i("log", this.toString()+" - "+any.toString())
 }

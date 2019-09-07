@@ -6,9 +6,12 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.simple.R
+import com.simple.base.Constant
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
+import com.simple.module.cNative.CNative
 import com.simple.module.download.service.getAbsolutePicPath
+import com.simple.module.internet.log
 import com.simple.module.lyrics.ui.LyricsActivity
 import com.simple.module.player.MusicPlayer
 import com.simple.module.player.bean.PlayType
@@ -85,7 +88,9 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
                 music.iconPath.isEmpty() -> ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
                 else -> ImageLoad.load(music.iconPath).into(ivArtistIcon)
             }
-
+            /*val f=CNative().main(music.musicPath)
+            val g=0
+*/
         }
 
         override fun onTimeChange(time: Int, duration: Int) {

@@ -2,6 +2,8 @@ package com.simple.tools
 
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
@@ -53,7 +55,7 @@ object MediaStoreUtil {
         cv.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, "$imageName.$suffix")
         cv.put(MediaStore.Images.ImageColumns.TITLE, imageName)
         cv.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/$suffix")
-        cv.put(MediaStore.Images.ImageColumns.DATA, dirPath + File.separator + imageName + "." + suffix)
+        //cv.put(MediaStore.Images.ImageColumns.DATA, dirPath + File.separator + imageName + "." + suffix)
         return MyApplication.ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
     }
 
@@ -198,23 +200,11 @@ object MediaStoreUtil {
     }
 
     @JvmStatic
-    fun requestPermission(fragment: Fragment, vararg permissions: String): Boolean {
-        val denied = permissions.filter {
-            ActivityCompat.checkSelfPermission(fragment.context!!, it) == PackageManager.PERMISSION_DENIED
-        }
-        if (denied.isEmpty()) return true
-        fragment.requestPermissions(denied.toTypedArray(), BaseActivity.REQUEST_CODE_PERMISSION)
-        return false
+    fun createF(ctx:Activity){
+        val intent=Intent(Intent.ACTION_CREATE_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type="image/*"
+        ctx.startActivityForResult(intent,0)
     }
-
-    fun requestPermission(activity: Activity, vararg permissions: String): Boolean {
-        val denied = permissions.filter {
-            ActivityCompat.checkSelfPermission(activity, it) == PackageManager.PERMISSION_DENIED
-        }
-        if (denied.isEmpty()) return true
-        ActivityCompat.requestPermissions(activity, denied.toTypedArray(), BaseActivity.REQUEST_CODE_PERMISSION)
-        return false
-    }
-
 
 }

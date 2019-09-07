@@ -24,6 +24,11 @@ abstract class BaseNavFragment : BaseFragment() {
         return rootView
     }
 
+
+    open fun onPermissionsCallback(resCode:Int,allGranted:Boolean){
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (fragment == this) fragment = null
