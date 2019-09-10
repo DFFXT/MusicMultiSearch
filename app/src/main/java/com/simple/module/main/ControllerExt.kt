@@ -6,14 +6,10 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.simple.R
-import com.simple.base.Constant
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
-import com.simple.module.cNative.CNative
-import com.simple.module.download.service.getAbsolutePicPath
-import com.simple.module.internet.log
+import com.simple.bean.getAbsolutePicPath
 import com.simple.module.lyrics.ui.LyricsActivity
-import com.simple.module.player.MusicPlayer
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
@@ -32,7 +28,12 @@ fun ControllerActivity.Companion.nextPlayType(currentPlayType: PlayType): PlayTy
 fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObserver {
     val ctx = this
     return object : PlayerObserver() {
-        private val tmpListSheet: TmpListBottomSheet by lazy { TmpListBottomSheet(ctx, playerOperation) }
+        private val tmpListSheet: TmpListBottomSheet by lazy {
+            TmpListBottomSheet(
+                ctx,
+                playerOperation
+            )
+        }
         private val bottomController = findViewById<ViewGroup>(R.id.bottom_controller)
         private val tvLeftTime = bottomController.findViewById<TextView>(R.id.tv_currentTime)
         private val tvRightTime = bottomController.findViewById<TextView>(R.id.tv_duration)
@@ -61,7 +62,11 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
                 tmpListSheet.show()
             }
             seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
 
                 }
 
@@ -77,15 +82,17 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
 
         }
 
-        override fun onMusicLoad(music: Music,bitmap: Bitmap?,lyrics: ArrayList<Lyrics>?) {
+        override fun onMusicLoad(music: Music, bitmap: Bitmap?, lyrics: ArrayList<Lyrics>?) {
             tvMusicName.text = music.musicName
             tvArtistName.text = music.artistName
             tvLeftTime.setText(R.string.time_0)
             tvRightTime.text = ResUtil.timeFormat("mm:ss", music.duration.toLong())
             seekBar.max = music.duration
             when {
-                bitmap!=null -> ivArtistIcon.setImageBitmap(bitmap)
-                music.iconPath.isEmpty() -> ImageLoad.load(music.getAbsolutePicPath()).into(ivArtistIcon)
+                bitmap != null -> ivArtistIcon.setImageBitmap(bitmap)
+                music.iconPath.isEmpty() -> ImageLoad.load(music.getAbsolutePicPath()).into(
+                    ivArtistIcon
+                )
                 else -> ImageLoad.load(music.iconPath).into(ivArtistIcon)
             }
             /*val f=CNative().main(music.musicPath)

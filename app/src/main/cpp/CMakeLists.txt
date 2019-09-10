@@ -3,6 +3,7 @@ add_library(
         native-lib
         SHARED
         a.cpp
+        CAddAdd.cpp
 )
 find_library(
         log-lib

@@ -4,10 +4,11 @@
 #include <string>
 #include <jni.h>
 #include <zconf.h>
+#include "CAddAdd.h"
 
 char* jstringTostring(JNIEnv* env, jstring jstr)
 {
-    char* rtn = NULL;
+    char* rtn = nullptr;
     jclass clsstring = env->FindClass("java/lang/String");
     jstring strencode = env->NewStringUTF("utf-8");
     jmethodID mid = env->GetMethodID(clsstring, "getBytes", "(Ljava/lang/String;)[B");
@@ -41,5 +42,19 @@ Java_com_simple_module_cNative_CNative_main(JNIEnv* env,jobject,jstring a){
 
     return array;
 }
+class F{
+public:int get(){
+        return 1;
+    }
+};
+
+/*extern "C" JNIEXPORT int JNICALL
+Java_com_simple_module_cNative_CNative_main(JNIEnv *env){
+    CAddAdd cAddAdd=CAddAdd();
+    cAddAdd.getValue();
+    delete(&cAddAdd);
+    return 1;
+}*/
+
 
 

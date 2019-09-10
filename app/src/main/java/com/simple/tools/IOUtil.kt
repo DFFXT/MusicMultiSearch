@@ -27,8 +27,8 @@ object IOUtil {
         stopCallback: ((complete: Boolean) -> Unit)? = null,
         stop: AtomicBoolean = AtomicBoolean(false)
     ): Int {
-        inputStream?:return 0
-        outputStream?:return 0
+        inputStream ?: return 0
+        outputStream ?: return 0
         var offset = 0
         var update = false
         var job: Job? = null
@@ -170,6 +170,20 @@ object IOUtil {
         }
     }
 
+    @JvmStatic
+    @WorkerThread
+    fun readText(inputStream: InputStream?, callback: (String?) -> Unit) {
+        if (inputStream == null) {
+            callback(null)
+            return
+        }
+        inputStream.use { input ->
+            BufferedInputStream(input).use { buffer ->
+                callback(String(buffer.readBytes()))
+            }
+        }
+    }
+
 
     @JvmStatic
     @WorkerThread
@@ -192,7 +206,7 @@ object IOUtil {
                     obj = oos.readObject() as? T
                 }
             }
-        }catch (e:java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
 

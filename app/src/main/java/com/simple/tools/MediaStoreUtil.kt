@@ -2,15 +2,10 @@ package com.simple.tools
 
 import android.app.Activity
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import com.simple.base.BaseActivity
 import com.simple.base.MyApplication
 import com.simple.base.ifNotNullOrBlank
 import com.simple.bean.Music
@@ -117,16 +112,19 @@ object MediaStoreUtil {
     }
 
     @JvmStatic
-    fun queryExist(fileAbsolutePath: String): Boolean {
-        val columns = arrayOf(MediaStore.Files.FileColumns.DATA)
-        var exist = false
+    fun queryExist(fileAbsolutePath: String): Int {
+        val columns = arrayOf(MediaStore.Files.FileColumns._ID)
+        var id = -1
         MyApplication.ctx.contentResolver.query(
             MediaStore.Files.getContentUri("external"), columns, MediaStore.Files.FileColumns.DATA + "=?",
             arrayOf(fileAbsolutePath), null, null
         ).use {
-            exist = it?.moveToFirst() ?: false
+            it?:return@use
+            if(it.moveToFirst()){
+                id=it.getInt(0)
+            }
         }
-        return exist
+        return id
     }
 
     /**
@@ -138,6 +136,11 @@ object MediaStoreUtil {
     }
 
     @JvmStatic
+    fun getFileUri(id:String):Uri{
+        return MediaStore.Files.getContentUri("external").buildUpon().appendPath(id).build()
+    }
+
+    @JvmStatic
     fun queryAudio(callback: (List<Music>) -> Unit) {
         GlobalScope.launch(Dispatchers.IO) {
             val list = LinkedList<Music>()
@@ -145,20 +148,20 @@ object MediaStoreUtil {
                 .use {
                     it ?: return@use
                     while (it.moveToNext()) {
-                        list.add(
-                            Music(
-                                musicId = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns._ID)),
-                                musicPath = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)),
-                                musicName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)),
-                                artistName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST))
-                                    ?: "",
-                                albumName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM)) ?: "",
-                                duration = it.getInt(it.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)),
-                                source = null,
-                                iconPath = "",
-                                lrc = null
-                            )
+                        val item=Music(
+                            musicId = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns._ID)),
+                            musicPath = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)),
+                            musicName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)),
+                            artistName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST))
+                                ?: "",
+                            albumName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM)) ?: "",
+                            duration = it.getInt(it.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)),
+                            source = null,
+                            iconPath = "",
+                            lrc = null
                         )
+                        item.localDisplayName = it.getString(it.getColumnIndex(MediaStore.Audio.AudioColumns.DISPLAY_NAME))
+                        list.add(item)
                     }
                 }
             withContext(Dispatchers.Main) {

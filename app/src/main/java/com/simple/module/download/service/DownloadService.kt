@@ -12,6 +12,8 @@ import com.simple.base.Constant
 import com.simple.base.MyApplication
 import com.simple.base.enqueue
 import com.simple.bean.Music
+import com.simple.bean.getBaseName
+import com.simple.bean.getFileName
 import com.simple.module.download.service.downloadInterface.DownloadAction
 import com.simple.module.download.service.downloadInterface.DownloadOperation
 import com.simple.module.internet.RetrofitPack
@@ -73,12 +75,12 @@ class DownloadService : Service() {
                 return@launch
             }
 
-            var bitmap:Bitmap?=null
+            var bitmap: Bitmap? = null
             MediaStoreUtil.createImageUri(music.getBaseName(), "png", Constant.Storage.PIC_PATH)
                 ?.let { uri ->
-                    RetrofitPack.request(music.iconPath).execute().body()?.apply{
+                    RetrofitPack.request(music.iconPath).execute().body()?.apply {
                         IOUtil.streamCopy(byteStream(), contentResolver.openOutputStream(uri))
-                        bitmap=BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+                        bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
                     }
                 }
 
@@ -96,7 +98,7 @@ class DownloadService : Service() {
                     IOUtil.streamCopy(it?.byteStream(), out)
                     ID3Encode(contentResolver.openInputStream(uri))
                         .writeBitmap(bitmap)
-                        .writeString(FrameID.TEXT,LyricsAnalysis.encode(music.lrc))
+                        .writeString(FrameID.TEXT, LyricsAnalysis.encode(music.lrc))
                         .encode(File(MediaStoreUtil.queryAudioPath(uri)!!))
                 })
             }

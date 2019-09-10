@@ -44,6 +44,9 @@ fun ViewGroup.inflate(@LayoutRes layout: Int, attach: Boolean = false): View {
 }
 
 
+
+
+
 fun TabLayout.setUpWithViewPager2(vp2:ViewPager2, title:List<String>){
     title.forEach {
         addTab(newTab().setText(it))
@@ -77,6 +80,10 @@ fun String?.ifNullOrBlank(candidateString:String):String{
 }
 fun String?.ifNotNullOrBlank(candidateString:String):String?{
     return if(this.isNullOrBlank()) this else candidateString
+}
+fun String.replaceLast(old:String,new:String):String{
+    val index=this.lastIndexOf(old)
+    return this.replaceRange(index,index+old.length,new)
 }
 
 

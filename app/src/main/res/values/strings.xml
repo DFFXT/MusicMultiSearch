@@ -28,6 +28,7 @@
     <string name="musicCount">（%d首）</string>
     <string name="unknownArtist">未知歌手</string>
     <string name="delete">删除</string>
+    <string name="detail">详情</string>
     <string name="reload">错误,是否重新加载？</string>
     <string name="loadError">无法播放</string>
     

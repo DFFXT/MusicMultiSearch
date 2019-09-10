@@ -45,6 +45,9 @@ class LocalMusicFragment : BaseFragment() {
                 playerOperation?.delete(item)
                 dialog.close()
             })
+        data.add(MusicOpBottomSheet.MusicOp(R.drawable.icon_kw,ResUtil.getString(R.string.detail)){_,item->
+
+        })
         MusicOpBottomSheet(context!!, data, false)
     }
 

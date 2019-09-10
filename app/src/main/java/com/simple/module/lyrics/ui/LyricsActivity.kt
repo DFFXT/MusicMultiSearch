@@ -10,6 +10,7 @@ import com.simple.R
 import com.simple.base.BaseActivity
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
+import com.simple.bean.getLocalLyrics
 import com.simple.module.main.vm.ControllerViewModel
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.playerInterface.PlayerObserver
@@ -22,7 +23,15 @@ class LyricsActivity : BaseActivity() {
 
     private val observer = object : PlayerObserver() {
         override fun onMusicLoad(music: Music, bitmap: Bitmap?, lyrics: ArrayList<Lyrics>?) {
-            lyricsView.lyrics = lyrics
+            if (lyrics != null) {
+                lyricsView.lyrics = lyrics
+                lyricsView.setCurrentTimeImmediately(op!!.getCurrentTime())
+            } else {
+                music.getLocalLyrics {
+                    lyricsView.lyrics = it
+                    lyricsView.setCurrentTimeImmediately(op!!.getCurrentTime())
+                }
+            }
         }
 
         override fun onLyricsLoad(lyrics: List<Lyrics>) {
