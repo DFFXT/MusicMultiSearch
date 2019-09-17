@@ -1,9 +1,6 @@
 package com.simple.module.internet
 
-import com.simple.module.search.searchResult.bean.bd.BdMusicInfoList
-import com.simple.module.search.searchResult.bean.bd.BdMusicInfoRes
-import com.simple.module.search.searchResult.bean.bd.BdSearchMusicResult
-import com.simple.module.search.searchResult.bean.bd.BdSearchRes
+import com.simple.module.search.searchResult.bean.bd.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -16,8 +13,12 @@ interface BdApis {
                     @Query("page_no") page: Int): Call<BdSearchRes<BdSearchMusicResult>>
 
 
+    @Deprecated("虽然可以请求多个，但是有可能无法播放 use requestInfo")
     @GET("http://music.taihe.com/data/music/links?")
     fun musicInfo(@Query("songIds") songIds: String): Call<BdMusicInfoRes<BdMusicInfoList>>
+
+    @GET("http://musicapi.taihe.com/v1/restserver/ting?method=baidu.ting.song.playAAC")
+    fun requestInfo(@Query("songid") songId:String):Call<BdMusicDetailInfoRes>
 
     @GET("")
     fun requestLrc(@Url lrcPath:String):Call<String>

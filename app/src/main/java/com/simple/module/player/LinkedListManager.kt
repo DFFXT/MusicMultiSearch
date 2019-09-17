@@ -6,13 +6,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.util.*
 
 /**
  * 增强型LinkedList 具有其他方法，同时不破坏本身方法
  * 使用list 做代理
  */
-class LinkedListImp<T>(private val list: LinkedList<T>) : LinkedListI<T>, List<T> by list, Serializable {
+class LinkedListImp<T>(private val list: MutableList<T>) : LinkedListI<T>, List<T> by list,
+    Serializable {
     private var index = -1
     override fun next(): T {
         index += 1
@@ -39,12 +39,12 @@ class LinkedListImp<T>(private val list: LinkedList<T>) : LinkedListI<T>, List<T
     }
 
     fun add(element: T, index: Int = size) {
-        list.add(element)
+        list.add(index, element)
         save()
     }
 
-    fun getLast(moveIndex:Boolean=false): T {
-        if(moveIndex) index=size-1
+    fun getLast(moveIndex: Boolean = false): T {
+        if (moveIndex) index = size - 1
         return get(size - 1)
     }
 
@@ -55,8 +55,29 @@ class LinkedListImp<T>(private val list: LinkedList<T>) : LinkedListI<T>, List<T
         save()
     }
 
-    fun setIndex(index: Int){
-        this.index=index
+    fun setIndex(index: Int) {
+        this.index = index
+        save()
+    }
+
+    override fun addAll(elements: Iterable<T>) {
+        list.addAll(elements)
+        save()
+    }
+
+    override fun clear() {
+        index = -1
+        list.clear()
+        save()
+    }
+
+    override fun remove(index: Int) {
+        if (index < 0 || index >= size) return
+        if (index <= this.index) {
+            this.index -= 1
+        }
+        list.removeAt(index)
+        save()
     }
 
     fun save() = save(this)

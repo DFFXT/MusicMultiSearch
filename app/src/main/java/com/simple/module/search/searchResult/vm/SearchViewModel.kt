@@ -2,12 +2,13 @@ package com.simple.module.search.searchResult.vm
 
 import androidx.lifecycle.MutableLiveData
 import com.simple.base.BaseViewModel
+import com.simple.base.ifNullOrBlank
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
-import com.simple.module.internet.observer
 import com.simple.module.search.searchResult.model.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -37,7 +38,9 @@ class SearchViewModel : BaseViewModel() {
     val liveLrc = MutableLiveData<List<Lyrics>>()
     val livePic = MutableLiveData<String>()
     val livePath = MutableLiveData<String>()
-    private var page = 1
+    val status = MutableLiveData<com.simple.module.internet.error.Error?>()
+    var page = 1
+        private set
     private var pageSize = 20
     private var keyword = ""
 
@@ -54,36 +57,47 @@ class SearchViewModel : BaseViewModel() {
             this.keyword = keyword
         }
         launch(Dispatchers.IO) {
-            model.search(keyword, page, pageSize).observer({ searchMusicRes ->
-                page++
-                searchResultList.data.addAll(searchMusicRes.data)
-                searchMusicRes.total = searchMusicRes.total
-                liveSearch.postValue(searchResultList)
-            })
+            model.search(keyword, page, pageSize).observer {
+                ok { searchMusicRes ->
+                    page++
+                    searchResultList.data.addAll(searchMusicRes.data)
+                    searchMusicRes.total = searchMusicRes.total
+                    liveSearch.postValue(searchResultList)
+                }
+                err {
+                    status.postValue(it)
+                }
+            }
         }
     }
 
     fun requestFull(music: Music, callback: (Music) -> Unit) {
         launch(Dispatchers.IO) {
-            if (music.iconPath.isEmpty()) {
-                music.iconPath = mRequestPic(music.musicId)
+            val path = async {
+                music.musicPath.ifNullOrBlank(mRequestPath(music.musicId))
             }
-            if (music.musicPath.isEmpty()) {
-                music.musicPath = mRequestPath(music.musicId)
+            val icon = async {
+                music.iconPath.ifNullOrBlank(mRequestPic(music.musicId))
             }
-            withContext(coroutineContext) {
+            val lrc = async {
+                music.lrc ?: mRequestLrc(music.musicId)
+            }
+            music.musicPath = path.await()
+            music.iconPath = icon.await()
+            music.lrc = lrc.await()
+            withContext(Dispatchers.Main) {
                 callback(music)
             }
         }
-
-
     }
 
     fun requestLrc(id: String) {
         launch(Dispatchers.IO) {
-            model.requestLrc(id).observer({
-                liveLrc.postValue(it)
-            })
+            model.requestLrc(id).observer {
+                ok {
+                    liveLrc.postValue(it)
+                }
+            }
         }
     }
 
@@ -99,9 +113,9 @@ class SearchViewModel : BaseViewModel() {
 
     private fun mRequestPic(id: String): String {
         var res = ""
-        model.requestPic(id).observer({
-            res = it
-        })
+        model.requestPic(id).observer {
+            ok { res = it }
+        }
         return res
     }
 
@@ -113,9 +127,9 @@ class SearchViewModel : BaseViewModel() {
 
     private fun mRequestPath(id: String): String {
         var res = ""
-        model.requestPath(id).observer({
-            res = it
-        })
+        model.requestPath(id).observer {
+            ok { res = it }
+        }
         return res
     }
 

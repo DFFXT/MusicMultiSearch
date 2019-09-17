@@ -24,5 +24,6 @@
             <enum name="circle" value="1" />
         </attr>
         <attr name="measure" format="string" />
+        <attr name="iv_afterDraw" format="string"/>
     </declare-styleable>
 </resources>

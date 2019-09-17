@@ -9,7 +9,6 @@ import com.simple.module.internet.RetrofitPack
 import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
 import com.simple.module.search.searchResult.vm.Source
-import com.simple.tools.ResUtil
 
 class KwModel : ISearchModel {
     private val http = RetrofitPack.retrofit.create(KwApis::class.java)
@@ -22,11 +21,11 @@ class KwModel : ISearchModel {
                         musicId = rowMusic.musicrid,
                         musicName = rowMusic.name,
                         albumName = rowMusic.album,
-                        duration = rowMusic.duration*1000,
+                        duration = rowMusic.duration * 1000,
                         artistName = rowMusic.artist,
                         iconPath = rowMusic.pic,
                         musicPath = "",
-                        lrcPath = "",
+                        lrc = null,
                         source = Source.KW
                     )
                 } as ArrayList<Music>
@@ -36,7 +35,7 @@ class KwModel : ISearchModel {
 
     override fun requestLrc(musicId: String): Transform<List<Lyrics>> {
         return http.requestInfo(musicId.drop("MUSIC_".length)).setTransform {
-            if (it.data == null) {
+            if (it.data == null || it.data.lrclist == null) {
                 return@setTransform arrayListOf<Lyrics>()
             }
             return@setTransform it.data.lrclist.map { rowLrc ->
@@ -52,7 +51,7 @@ class KwModel : ISearchModel {
     }
 
     override fun requestPath(musicId: String): Transform<String> {
-        return http.requestPath(subId(musicId),System.currentTimeMillis()).setTransform {
+        return http.requestPath(subId(musicId), System.currentTimeMillis()).setTransform {
             return@setTransform it.url
         }
     }

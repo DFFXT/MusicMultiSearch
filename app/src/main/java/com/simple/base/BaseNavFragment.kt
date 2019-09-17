@@ -5,18 +5,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
 
 abstract class BaseNavFragment : BaseFragment() {
+    abstract var fitId: Int
+    open fun initData() {
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        if (!init) {
+            initData()
+        }
         super.onCreateView(inflater, container, savedInstanceState)
-        rootView.post {
-            activity!!.window.decorView.requestApplyInsets()
+        rootView.findViewById<View>(fitId)?.apply {
+            setPaddingRelative(paddingStart, paddingTop + (activity as BaseActivity).topInset, paddingEnd, paddingBottom)
         }
         fragment = this
         return rootView
+    }
+
+
+    open fun onPermissionsCallback(resCode:Int,allGranted:Boolean){
+
     }
 
     override fun onDestroy() {

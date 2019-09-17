@@ -1,58 +1,94 @@
 package com.simple.module.main
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.R
-import com.simple.base.BaseAdapter
 import com.simple.base.BaseBottomSheet
-import com.simple.base.BaseViewHolder
+import com.simple.base.BaseSingleAdapter
+import com.simple.base.ifNullOrBlank
+import com.simple.bean.Lyrics
 import com.simple.bean.Music
+import com.simple.module.download.service.DownloadService
+import com.simple.module.download.service.isInternetMusic
 import com.simple.module.player.bean.PlayType
+import com.simple.module.player.playerInterface.PlayerObserver
+import com.simple.module.player.playerInterface.PlayerOperation
 import com.simple.tools.ResUtil
+import com.simple.tools.WindowUtil
 import kotlinx.android.synthetic.main.layout_tmp_list.view.*
 
-class TmpListBottomSheet(ctx: Context) : BaseBottomSheet(ctx, R.layout.layout_tmp_list) {
+/**
+ * 播放列表弹窗
+ */
+class TmpListBottomSheet(ctx: Context,private val op:PlayerOperation?) : BaseBottomSheet(ctx, R.layout.layout_tmp_list) {
     private lateinit var playType: PlayType
-    private val adapter = object : BaseAdapter<Music>() {
-        override fun onBindViewHolder(holder: BaseViewHolder, position: Int, item: Music) {
-            if (holder.type == R.layout.item_tmp_list) {
-                holder.setText(R.id.tv_musicName, item.musicName)
-                holder.setText(R.id.tv_artistName, item.artistName)
+    private lateinit var currentMusic: Music
+    private val observer = object : PlayerObserver() {
+        override fun onMusicLoad(music: Music, bitmap: Bitmap?, lyrics: ArrayList<Lyrics>?) {
+            currentMusic = music
+        }
+
+        override fun onListChange(list: List<Music>) {
+            adapter.update(list)
+        }
+
+        override fun onPlayTypeChange(type: PlayType) {
+            playType = type
+            rootView.iv_playType.setImageResource(playType.drawable)
+            rootView.tv_playType.text = playType.type
+        }
+    }
+    private val adapter = BaseSingleAdapter<Music>(R.layout.item_tmp_list) { holder, position, item ->
+        holder.setText(R.id.tv_musicName, item.musicName)
+        holder.setText(R.id.tv_artistName, " - " + item.artistName.ifNullOrBlank(ResUtil.getString(R.string.unknownArtist)))
+        holder.findView<View>(R.id.iv_playingFlag).visibility = View.GONE
+        holder.findView<View>(R.id.iv_download).visibility = View.GONE
+        holder.itemView.setBackgroundResource(R.drawable.selector_transparent_gray)
+        if (item == currentMusic) {
+            holder.itemView.setBackgroundColor(0xffeeeeee.toInt())
+            holder.findView<View>(R.id.iv_playingFlag).visibility = View.VISIBLE
+            if (item.isInternetMusic()) {
+                val ivDownload=holder.findView<View>(R.id.iv_download)
+                ivDownload.visibility = View.VISIBLE
+                ivDownload.setOnClickListener{
+                    DownloadService.addTask(ctx,item)
+                    close()
+                }
             }
+            holder.itemView.setOnClickListener(null)
+        }else{
             holder.itemView.setOnClickListener {
-                ControllerActivity.op!!.play(item)
+                op?.play(item)
+                close()
             }
         }
 
-        override fun getLayout(viewType: Int): Int {
-            return viewType
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return if (position == ControllerActivity.op!!.getIndex()) R.layout.item_tmp_list else R.layout.item_tmp_list
+        holder.findView<View>(R.id.iv_delete).setOnClickListener {
+            op?.remove(position)
         }
     }
 
     init {
-        rooView.iv_playType.setOnClickListener {
-            ControllerActivity.op?.changePlayType(ControllerActivity.nextPlayType(playType))
-            playTypeChange()
+        rootView.iv_playType.setOnClickListener {
+            op?.changePlayType(ControllerActivity.nextPlayType(playType))
         }
-        rooView.rv_tmpList.layoutManager = LinearLayoutManager(ctx)
-        rooView.rv_tmpList.adapter = adapter
-    }
-
-    private fun playTypeChange() {
-        playType = ControllerActivity.op!!.getPlayType()
-        rooView.iv_playType.setImageResource(playType.drawable)
-        rooView.tv_playType.text = playType.type
+        rootView.iv_deleteAll.setOnClickListener {
+            op?.removeAll()
+        }
+        rootView.rv_tmpList.layoutManager = LinearLayoutManager(ctx)
+        rootView.rv_tmpList.adapter = adapter
+        rootView.rv_tmpList.setHasFixedSize(true)
+        val lp=rootView.layoutParams
+        lp.height=WindowUtil.screenHeight()/2
+        rootView.layoutParams=lp
+        op?.addObserver(this, observer)
     }
 
     override fun show() {
-        playTypeChange()
-        rooView.tv_musicCount.text = ResUtil.getString(R.string.musicCount, ControllerActivity.op!!.getMusicList().size)
-        adapter.update(ControllerActivity.op!!.getMusicList())
+        adapter.notifyDataSetChanged()
+        rootView.rv_tmpList.scrollToPosition(op?.getIndex()?:0)
         super.show()
     }
-
 }

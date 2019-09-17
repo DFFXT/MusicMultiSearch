@@ -6,7 +6,6 @@ import com.simple.bean.SearchMusicRes
 import com.simple.module.internet.*
 import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.LyricsAnalysis
-import com.simple.tools.ResUtil
 
 class BdModel : ISearchModel {
     private val http = RetrofitPack.retrofit.create(BdApis::class.java)
@@ -19,7 +18,7 @@ class BdModel : ISearchModel {
                     albumName = rowMusic.albumTitle,
                     duration = rowMusic.duration.toInt()*1000,
                     artistName = rowMusic.author,
-                    lrcPath = rowMusic.lrcLink ?: "",
+                    lrc = null,
                     iconPath = rowMusic.picSmall ?: "",
                     musicPath = "",
                     source = Source.BD
@@ -29,9 +28,9 @@ class BdModel : ISearchModel {
     }
 
     override fun requestLrc(musicId: String): Transform<List<Lyrics>> {
-        return http.musicInfo(musicId).setTransform {
+        return http.requestInfo(musicId).setTransform {
             val res = ArrayList<Lyrics>()
-            it.data.songList[0].lrcLink?.let { link ->
+            it.songInfo.lrcLink.let { link ->
                 http.requestLrc(link).observer({ rowLyrics ->
                     res.addAll(LyricsAnalysis(rowLyrics).lyricsList)
                 })
@@ -41,14 +40,14 @@ class BdModel : ISearchModel {
     }
 
     override fun requestPic(musicId: String): Transform<String> {
-        return http.musicInfo(musicId).setTransform {
-            it.data.songList.firstOrNull()?.singerIconBig ?: ""
+        return http.requestInfo(musicId).setTransform {
+            it.songInfo.artistPic500x500
         }
     }
 
     override fun requestPath(musicId: String): Transform<String> {
-        return http.musicInfo(musicId).setTransform {
-            it.data.songList.firstOrNull()?.songLink ?: ""
+        return http.requestInfo(musicId).setTransform {
+            it.bitRate.songLink
         }
     }
 }

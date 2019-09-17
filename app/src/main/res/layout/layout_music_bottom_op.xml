@@ -24,11 +24,11 @@
         android:layout_marginBottom="6dp"
         android:textSize="@dimen/textSize_normal"
         android:textColor="#000"
-        app:layout_constraintBottom_toTopOf="@id/tv_artist"
+        app:layout_constraintBottom_toTopOf="@id/tv_artistName"
         app:layout_constraintStart_toEndOf="@id/iv_musicIcon"
         tools:text="Name"/>
     <TextView
-        android:id="@+id/tv_artist"
+        android:id="@+id/tv_artistName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -36,17 +36,17 @@
         android:textSize="@dimen/textSize_min"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toEndOf="@id/iv_musicIcon"
-        app:layout_constraintBottom_toBottomOf="@id/iv_musicIcon"
+        app:layout_constraintTop_toBottomOf="@id/tv_musicName"
         tools:text="artist"/>
     <View
         android:id="@+id/view_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="5dp"
         android:background="@color/gray"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_musicIcon"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_artistName"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_musicOp"

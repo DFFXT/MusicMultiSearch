@@ -38,6 +38,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />-->
         <activity android:name=".module.download.DownloadActivity" />
         <activity android:name=".module.search.related.SearchActivity" />
+        <activity android:name=".module.lyrics.ui.LyricsActivity" />
 
         <service android:name=".module.player.MusicPlayer" />
         <service android:name=".module.download.service.DownloadService" />

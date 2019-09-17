@@ -2,18 +2,31 @@ package com.simple.view
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.widget.ImageView
 import com.simple.R
+import java.lang.Exception
+import java.lang.RuntimeException
 
 class RoundImageView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ImageView(context, attrs, defStyleAttr) {
 
     var beforeDraw:ImageDraw?=null
+        set(value) {
+            field=value
+            value?.onAttach()
+            postInvalidate()
+        }
     var afterDraw:ImageDraw?=null
+        set(value) {
+            field=value
+            value?.onAttach()
+            postInvalidate()
+        }
     var measureListener: IOnMeasure?=null
 
     var radius=0f
@@ -36,7 +49,9 @@ class RoundImageView @JvmOverloads constructor(
             val measure=at.getString(R.styleable.RoundImageView_measure)
             if(measure!=null){
                 measureListener=Class.forName(measure).newInstance() as IOnMeasure
-
+            }
+            if(at.hasValue(R.styleable.RoundImageView_iv_afterDraw)){
+                afterDraw=Class.forName(at.getString(R.styleable.RoundImageView_iv_afterDraw)?:throw Exception("iv_afterDraw need a class fullName")) as ImageDraw
             }
             at.recycle()
         }
@@ -69,7 +84,7 @@ class RoundImageView @JvmOverloads constructor(
     private fun setPath(){
         path.reset()
 
-        rect.set(paddingStart.toFloat(),paddingTop.toFloat(),width-paddingStart-paddingEnd.toFloat(),height-paddingTop-paddingBottom.toFloat())
+        rect.set(paddingStart.toFloat(),paddingTop.toFloat(),width-paddingEnd.toFloat(),height-paddingBottom.toFloat())
         if(type==0){
             path.addRoundRect(rect,radius,radius,Path.Direction.CW)
         }else if (type==1){

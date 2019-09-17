@@ -6,7 +6,7 @@
     android:id="@+id/navigation">
     <fragment android:id="@+id/nav_mainFragment"
         android:name="com.simple.module.main.MainFragment"
-        tools:layout="@layout/fragment_local_music"
+        tools:layout="@layout/fragment_main"
         >
         <action android:id="@+id/action_gotToSearchResult" app:destination="@id/nav_searchResult"/>
     </fragment>

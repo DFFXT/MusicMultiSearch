@@ -3,6 +3,8 @@ package com.simple.tools;
 import com.simple.bean.Lyrics;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,5 +56,29 @@ public class LyricsAnalysis {
 
 
         this.lyricsList.add(line);
+    }
+
+    /**
+     * 歌词字符串化
+     * @param lyrics lyrics
+     * @return str
+     */
+    public static String encode(List<Lyrics> lyrics){
+        StringBuilder lrc=new StringBuilder();
+        for(Lyrics lyric:lyrics){
+            int minute=lyric.getMillsTime()/(60*1000);
+            int second=(lyric.getMillsTime()-minute*60*1000)/1000;
+            int millSecond=lyric.getMillsTime()%1000/10;
+            lrc.append("[")
+                    .append(String.format(Locale.CHINA,"%02d", minute))
+                    .append(":")
+                    .append(String.format(Locale.CHINA,"%02d", second))
+                    .append(".")
+                    .append(String.format(Locale.CHINA,"%02d", millSecond))
+                    .append("]")
+                    .append(lyric.getLyrics())
+                    .append("\n");
+        }
+        return lrc.toString();
     }
 }

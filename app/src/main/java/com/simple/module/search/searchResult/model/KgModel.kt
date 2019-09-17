@@ -10,7 +10,6 @@ import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
 import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.LyricsAnalysis
-import com.simple.tools.ResUtil
 
 class KgModel : ISearchModel {
     private val http = RetrofitPack.retrofit.create(KgApis::class.java)
@@ -27,7 +26,7 @@ class KgModel : ISearchModel {
                         artistName = rowMusic.singerName.replace("<em>", "").replace("</em>", ""),
                         iconPath = "",
                         musicPath = "",
-                        lrcPath = "",
+                        lrc = null,
                         source = Source.KG
                     )
                 } as ArrayList<Music>

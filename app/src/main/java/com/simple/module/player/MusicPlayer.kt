@@ -6,12 +6,24 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.LifecycleOwner
+import com.simple.R
+import com.simple.base.MyApplication
 import com.simple.bean.Music
+import com.simple.module.internet.log
 import com.simple.module.player.bean.PlayType
+import com.simple.module.player.id3.ID3Decode
+import com.simple.module.player.id3.ID3Encode
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
+import com.simple.tools.MToast
+import com.simple.tools.MediaStoreUtil
+import com.simple.tools.ResUtil
 import com.simple.tools.Ticker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 
 class MusicPlayer : Service() {
@@ -20,10 +32,14 @@ class MusicPlayer : Service() {
     private var playType = PlayType.ALL_CYCLE
     private var player: MediaPlayer = MediaPlayer()
     private var operationImp = PlayerOperationImp()
-    private var playerOK = false
+    private var playerPrepared = false
     private var autoPlay = false
+    private val iD3Decode = ID3Decode()
     private val ticker = Ticker(500, 0, Dispatchers.Main) {
-        observerManager.dispatchTimeChange(operationImp.getCurrentTime(), operationImp.getDuration())
+        observerManager.dispatchTimeChange(
+            operationImp.getCurrentTime(),
+            operationImp.getDuration()
+        )
     }
 
     init {
@@ -43,10 +59,10 @@ class MusicPlayer : Service() {
             }
         }
         player.setOnPreparedListener {
-            playerOK = true
+            playerPrepared = true
             val music = linkedList.getCurrent()
             music.duration = operationImp.getDuration()
-            //observerManager.dispatchLoad(music)
+            observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
             if (!autoPlay) {
                 autoPlay = true
                 return@setOnPreparedListener
@@ -58,7 +74,7 @@ class MusicPlayer : Service() {
         }
         player.setOnErrorListener { _, _, _ ->
             ticker.stop()
-            playerOK = false
+            playerPrepared = false
             player.reset()
             return@setOnErrorListener true
         }
@@ -74,9 +90,13 @@ class MusicPlayer : Service() {
         return operationImp
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_NOT_STICKY
+    }
+
     inner class PlayerOperationImp : Binder(), PlayerOperation {
         override fun toggle() {
-            if (!playerOK) return
+            if (!playerPrepared) return
             if (player.isPlaying) {
                 operationImp.pause()
             } else {
@@ -93,7 +113,15 @@ class MusicPlayer : Service() {
                 linkedList.setIndex(index)
                 load(linkedList.getCurrent())
             }
+        }
 
+        override fun play(index: Int) {
+            if (linkedList.getIndex() == index) {
+                toggle()
+            } else {
+                linkedList.setIndex(index)
+                load(linkedList.getCurrent())
+            }
         }
 
         override fun next() {
@@ -128,12 +156,39 @@ class MusicPlayer : Service() {
 
         override fun addToNext(music: Music) {
             linkedList.add(music, linkedList.getIndex() + 1)
+            observerManager.dispatchListChange(linkedList)
         }
 
-        override fun getCurrentTime(): Int = if (playerOK) player.currentPosition else 0
+        override fun addAll(data: List<Music>) {
+            linkedList.clear()
+            linkedList.addAll(data)
+            observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun remove(index: Int) {
+            if (linkedList.getIndex() == index) {
+                linkedList.remove(index)
+                next()
+            } else {
+                linkedList.remove(index)
+            }
+            observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun removeAll() {
+            linkedList.clear()
+            reset()
+            observerManager.dispatchListChange(linkedList)
+        }
+
+        override fun delete(music: Music) {
+
+        }
+
+        override fun getCurrentTime(): Int = if (playerPrepared) player.currentPosition else 0
 
         override fun getDuration(): Int {
-            return if (playerOK) player.duration else 0
+            return if (playerPrepared) player.duration else 0
         }
 
         override fun getPlayType() = playType
@@ -154,13 +209,57 @@ class MusicPlayer : Service() {
     }
 
     private fun dispatchInfo(observer: PlayerObserver) {
-        observer.onStatusChange(player.isPlaying)
+        observer.onStatusChange(player.isPlaying, false)
         if (linkedList.size > 0) {
-            observer.onMusicLoad(linkedList.getCurrent())
+            observer.onMusicLoad(linkedList.getCurrent(), iD3Decode.bitmap, iD3Decode.lyrics)
         }
 
         observer.onPlayTypeChange(playType)
         observer.onListChange(linkedList)
+    }
+
+
+    private fun reset() {
+        player.reset()
+        observerManager.dispatchLoad(Music("", "", "", 0, "", "", null, "", null), null, null)
+    }
+
+
+    /**
+     * 本地音乐需要通过id构建uri来播放
+     */
+    private fun load(music: Music) {
+        playerPrepared = false
+        try {
+            player.reset()
+            GlobalScope.launch (Dispatchers.IO){
+                if (music.source == null) {
+
+                    val uri = MediaStoreUtil.getAudioUri(music.musicId)
+
+                    //ID3Encode(MyApplication.ctx.contentResolver.openInputStream(uri))
+                        //.writeFile()
+                        //.encode(File(music.musicPath))
+
+
+                    iD3Decode.decode(uri)
+                    player.setDataSource(MyApplication.ctx, uri, null)
+
+                } else {
+                    player.setDataSource(music.musicPath)
+                }
+                player.prepareAsync()
+                withContext(Dispatchers.Main){
+                    observerManager.dispatchLoad(music, iD3Decode.bitmap, iD3Decode.lyrics)
+                }
+
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            MToast.showToast(R.string.loadError)
+        }
+
     }
 
     override fun onDestroy() {
@@ -168,14 +267,6 @@ class MusicPlayer : Service() {
         ticker.stop()
         player.release()
         linkedList.save()
-    }
-
-    private fun load(music: Music) {
-        playerOK = false
-        player.reset()
-        player.setDataSource(music.musicPath)
-        player.prepareAsync()
-        observerManager.dispatchLoad(music)
     }
 
 }
