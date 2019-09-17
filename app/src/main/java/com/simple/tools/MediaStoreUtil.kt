@@ -49,8 +49,8 @@ object MediaStoreUtil {
         val cv = ContentValues()
         cv.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, "$imageName.$suffix")
         cv.put(MediaStore.Images.ImageColumns.TITLE, imageName)
-        cv.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/$suffix")
-        //cv.put(MediaStore.Images.ImageColumns.DATA, dirPath + File.separator + imageName + "." + suffix)
+        cv.put(MediaStore.Images.ImageColumns.DURATION, "image/$suffix")
+        cv.put(MediaStore.Images.ImageColumns.DATA, dirPath + File.separator + imageName + "." + suffix)
         return MyApplication.ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
     }
 
@@ -184,7 +184,7 @@ object MediaStoreUtil {
     fun queryFiles() {
         GlobalScope.launch(Dispatchers.IO) {
             val list = LinkedList<Music>()
-            MyApplication.ctx.contentResolver.query(MediaStore.Files.getContentUri("external"), null, null, null, null)
+            MyApplication.ctx.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null)
                 .use {
                     it ?: return@launch
                     while (it.moveToNext()) {

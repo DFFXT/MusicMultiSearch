@@ -2,14 +2,15 @@ package com.simple.module.search.searchResult.vm
 
 import androidx.lifecycle.MutableLiveData
 import com.simple.base.BaseViewModel
+import com.simple.base.ifNullOrBlank
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
 import com.simple.bean.SearchMusicRes
-import com.simple.module.internet.ConcurrentRequest
 import com.simple.module.search.searchResult.model.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlinx.coroutines.withContext
 
 class SearchViewModel : BaseViewModel() {
     private val kwModel: KwModel by lazy { KwModel() }
@@ -70,29 +71,24 @@ class SearchViewModel : BaseViewModel() {
         }
     }
 
-    fun requestFull(music: Music, lrc: Boolean = false, callback: (Music) -> Unit) {
-        val runs = LinkedList<Runnable>()
-        if (music.musicPath.isEmpty()) {
-            runs.add(Runnable {
-                music.musicPath = mRequestPath(music.musicId)
-            })
-        }
-        if (music.iconPath.isEmpty()) {
-            runs.add(Runnable {
-                music.iconPath = mRequestPic(music.musicId)
-            })
-        }
-        if (lrc && music.lrc.isNullOrEmpty()) {
-            runs.add(Runnable {
-                music.lrc = mRequestLrc(music.musicId)
-            })
-        }
-        ConcurrentRequest.Builder()
-            .addRequest(runs)
-            .complete {
+    fun requestFull(music: Music, callback: (Music) -> Unit) {
+        launch(Dispatchers.IO) {
+            val path = async {
+                music.musicPath.ifNullOrBlank(mRequestPath(music.musicId))
+            }
+            val icon = async {
+                music.iconPath.ifNullOrBlank(mRequestPic(music.musicId))
+            }
+            val lrc = async {
+                music.lrc ?: mRequestLrc(music.musicId)
+            }
+            music.musicPath = path.await()
+            music.iconPath = icon.await()
+            music.lrc = lrc.await()
+            withContext(Dispatchers.Main) {
                 callback(music)
             }
-            .request()
+        }
     }
 
     fun requestLrc(id: String) {

@@ -11,6 +11,7 @@ import com.simple.base.BaseActivity
 import com.simple.base.BaseNavFragment
 import com.simple.module.main.vm.ControllerViewModel
 import com.simple.module.player.bean.PlayType
+import com.simple.tools.MediaStoreUtil
 import com.simple.tools.permission.PermissionUtil
 import kotlinx.android.synthetic.main.activity_controller.*
 

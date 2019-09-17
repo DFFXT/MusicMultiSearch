@@ -53,7 +53,6 @@ abstract class BaseActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         if(permissions.isEmpty())return
-        requestCode.log("sdffff")
         permissionCallback?.get(requestCode)?.callback?.invoke(!grantResults.contains(PackageManager.PERMISSION_DENIED))
         permissionCallback?.remove(requestCode)
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

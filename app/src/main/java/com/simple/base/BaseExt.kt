@@ -16,11 +16,8 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.math.max
 
 fun View.visibleOrInVisible(visible: Boolean) {
@@ -44,14 +41,11 @@ fun ViewGroup.inflate(@LayoutRes layout: Int, attach: Boolean = false): View {
 }
 
 
-
-
-
-fun TabLayout.setUpWithViewPager2(vp2:ViewPager2, title:List<String>){
+fun TabLayout.setUpWithViewPager2(vp2: ViewPager2, title: List<String>) {
     title.forEach {
         addTab(newTab().setText(it))
     }
-    this.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
+    this.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
         override fun onTabReselected(tab: TabLayout.Tab?) {
 
         }
@@ -60,30 +54,36 @@ fun TabLayout.setUpWithViewPager2(vp2:ViewPager2, title:List<String>){
         }
 
         override fun onTabSelected(tab: TabLayout.Tab) {
-            vp2.setCurrentItem(tab.position,true)
+            vp2.setCurrentItem(tab.position, true)
         }
     })
-    vp2.registerOnPageChangeCallback(object:ViewPager2.OnPageChangeCallback(){
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+    vp2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
 
         }
 
         override fun onPageSelected(position: Int) {
-            setScrollPosition(position,0f,false)
+            setScrollPosition(position, 0f, false)
         }
     })
 }
 
 
-fun String?.ifNullOrBlank(candidateString:String):String{
-    return if(this.isNullOrBlank()) candidateString else this
+fun String?.ifNullOrBlank(candidateString: String): String {
+    return if (this.isNullOrBlank()) candidateString else this
 }
-fun String?.ifNotNullOrBlank(candidateString:String):String?{
-    return if(this.isNullOrBlank()) this else candidateString
+
+fun String?.ifNotNullOrBlank(candidateString: String): String? {
+    return if (this.isNullOrBlank()) this else candidateString
 }
-fun String.replaceLast(old:String,new:String):String{
-    val index=this.lastIndexOf(old)
-    return this.replaceRange(index,index+old.length,new)
+
+fun String.replaceLast(old: String, new: String): String {
+    val index = this.lastIndexOf(old)
+    return this.replaceRange(index, index + old.length, new)
 }
 
 
@@ -100,8 +100,8 @@ fun InputStream.read(length: Int): ByteArray? {
     return headByte
 }
 
-fun Call.enqueue(ok:(ResponseBody?)->Unit, error:((IOException)->Unit)?=null){
-    enqueue(object :Callback{
+fun Call.enqueue(ok: (ResponseBody?) -> Unit, error: ((IOException) -> Unit)? = null) {
+    enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             error?.invoke(e)
         }
@@ -116,8 +116,8 @@ fun Call.enqueue(ok:(ResponseBody?)->Unit, error:((IOException)->Unit)?=null){
 //**loading动画中的点击事件
 var View.loadingClickListen: View.OnClickListener?
     get() {
-        val listener=getTag(R.integer.loadingListenerId)
-        return if(listener==null) null else listener as View.OnClickListener
+        val listener = getTag(R.integer.loadingListenerId)
+        return if (listener == null) null else listener as View.OnClickListener
     }
     set(v) {
         this.setTag(R.integer.loadingListenerId, v)
@@ -141,14 +141,15 @@ var View.errorView: View?
         this.setTag(R.integer.errorViewId, v)
     }
 
-var View.errorClickLinsten:View.OnClickListener?
+var View.errorClickLinsten: View.OnClickListener?
     get() {
-        val listener=getTag(R.integer.errorListenerId)
-        return if(listener==null) null else listener as View.OnClickListener
+        val listener = getTag(R.integer.errorListenerId)
+        return if (listener == null) null else listener as View.OnClickListener
     }
     set(v) {
         this.setTag(R.integer.errorListenerId, v)
     }
+
 /**
  * 对一个view显示Loading动画，采用覆盖方式
  */
@@ -165,9 +166,9 @@ fun View.showLoading(isRootLoading: Boolean = false) {
                     height!=ViewGroup.LayoutParams.MATCH_PARENT){
                 mShowLoading()
             }else*///{
-                post {
-                    mShowLoading()
-                }
+            post {
+                mShowLoading()
+            }
             //}
 
         }
@@ -175,13 +176,13 @@ fun View.showLoading(isRootLoading: Boolean = false) {
 }
 
 
-
 private fun View.mShowLoading(w: Int = 0, h: Int = 0) {
     hideError()
     var mLoadingView = loadingView
     if (mLoadingView == null) {
         mLoadingView = LayoutInflater.from(context).inflate(R.layout.layout_loading, null, false)
-        Glide.with(this).asGif().load(R.drawable.loading_gif).into((mLoadingView as ViewGroup).findViewById(R.id.iv_loading))
+        Glide.with(this).asGif().load(R.drawable.loading_gif)
+            .into((mLoadingView as ViewGroup).findViewById(R.id.iv_loading))
         loadingView = mLoadingView
     }
     val p = parent as ViewGroup
@@ -200,7 +201,7 @@ private fun View.mShowLoading(w: Int = 0, h: Int = 0) {
 /**
  * 错误界面
  */
-fun View.showError(tip:String?=null,drawable: Drawable?=null):ViewGroup {
+fun View.showError(tip: String? = null, drawable: Drawable? = null): ViewGroup {
     hideLoading()
     var mErrorView = errorView
     if (mErrorView == null) {
@@ -209,9 +210,9 @@ fun View.showError(tip:String?=null,drawable: Drawable?=null):ViewGroup {
         errorView = mErrorView
         mErrorView as ViewGroup
     }
-    if(tip!=null)
-        mErrorView.findViewById<TextView>(R.id.tv_errorTip).text=tip
-    if(drawable!=null)
+    if (tip != null)
+        mErrorView.findViewById<TextView>(R.id.tv_errorTip).text = tip
+    if (drawable != null)
         mErrorView.findViewById<ImageView>(R.id.iv_refresh).setImageDrawable(drawable)
     val p = parent as ViewGroup
     p.addView(mErrorView, width, height)
@@ -231,15 +232,16 @@ fun View.showError(tip:String?=null,drawable: Drawable?=null):ViewGroup {
 fun View.hideLoading() {
     val mLoadingView = loadingView
     if (mLoadingView != null) {
-        post{
+        post {
             (parent as ViewGroup).removeView(mLoadingView)
         }
 
     }
 }
-fun View.hideError(){
+
+fun View.hideError() {
     val mErrorView = errorView
-    if(mErrorView!=null){
+    if (mErrorView != null) {
         post {
             (parent as ViewGroup).removeView(mErrorView)
         }
@@ -249,7 +251,7 @@ fun View.hideError(){
 /**
  * 还原内容界面
  */
-fun View.showContent(){
+fun View.showContent() {
     hideLoading()
     hideError()
 }

@@ -40,7 +40,7 @@ class SearchResultFragment : BaseNavFragment() {
         }
         holder.itemView.setOnClickListener {
 
-            vm.requestFull(item, true) {
+            vm.requestFull(item) {
                 op?.play(item)
             }
         }
@@ -57,7 +57,7 @@ class SearchResultFragment : BaseNavFragment() {
             dialog.close()
         }))
         data.add(MusicOpBottomSheet.MusicOp(R.drawable.icon_kw, ResUtil.getString(R.string.download)) { v, item ->
-            vm.requestFull(item, true) {
+            vm.requestFull(item) {
                 DownloadService.addTask(v.context, item)
             }
             dialog.close()
