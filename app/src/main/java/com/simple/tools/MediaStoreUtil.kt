@@ -210,4 +210,12 @@ object MediaStoreUtil {
         ctx.startActivityForResult(intent,0)
     }
 
+
+    @JvmStatic
+    fun delete(musicId:String):Int{
+        val uri=getAudioUri(musicId)
+        //MyApplication.ctx.contentResolver.query(uri,null,null,null,null)?.notificationUri
+        return MyApplication.ctx.contentResolver.delete(uri, null, null)
+    }
+
 }

@@ -187,7 +187,8 @@ object IOUtil {
 
     @JvmStatic
     @WorkerThread
-    fun saveObject(obj: Any, name: String) {
+    fun saveObject(obj: Any?, name: String) {
+        obj ?: return
         MyApplication.ctx.openFileOutput(name, Context.MODE_PRIVATE).use {
             ObjectOutputStream(it).use { oos ->
                 oos.writeObject(obj)

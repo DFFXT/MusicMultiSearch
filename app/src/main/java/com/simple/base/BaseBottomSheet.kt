@@ -3,6 +3,7 @@ package com.simple.base
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -43,14 +44,17 @@ abstract class BaseBottomSheet(ctx: Context, @LayoutRes layout:Int):BaseLifeCycl
         stateChangeListener = listener
     }
 
+    @CallSuper
     open fun show() {
         state=State.RESUMED
         sheet.show()
     }
 
+    @CallSuper
     open fun close() {
         sheet.dismiss()
     }
+    @CallSuper
     open fun destory(){
         close()
         state=State.DESTROYED

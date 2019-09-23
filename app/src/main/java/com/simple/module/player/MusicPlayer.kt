@@ -4,21 +4,21 @@ import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Environment
 import android.os.IBinder
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LifecycleOwner
 import com.simple.R
 import com.simple.base.MyApplication
 import com.simple.bean.Music
+import com.simple.bean.getAbsolutePath
 import com.simple.module.internet.log
 import com.simple.module.player.bean.PlayType
 import com.simple.module.player.id3.ID3Decode
 import com.simple.module.player.id3.ID3Encode
 import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
-import com.simple.tools.MToast
-import com.simple.tools.MediaStoreUtil
-import com.simple.tools.ResUtil
-import com.simple.tools.Ticker
+import com.simple.tools.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -183,6 +183,8 @@ class MusicPlayer : Service() {
 
         override fun delete(music: Music) {
 
+            val res=MediaStoreUtil.delete(musicId = music.musicId)
+            val f=0
         }
 
         override fun getCurrentTime(): Int = if (playerPrepared) player.currentPosition else 0

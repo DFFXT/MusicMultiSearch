@@ -8,6 +8,7 @@ import com.simple.base.read
 import com.simple.bean.Lyrics
 import com.simple.tools.LyricsAnalysis
 import java.io.InputStream
+import java.lang.Exception
 import kotlin.experimental.and
 import kotlin.math.min
 
@@ -108,8 +109,13 @@ class ID3Decode {
     fun decode(uri: Uri): ID3Decode {
         bitmap = null
         lyrics = null
-        val input = MyApplication.ctx.contentResolver.openInputStream(uri) ?: return this
-        decode(input)
+        try {
+            val input = MyApplication.ctx.contentResolver.openInputStream(uri) ?: return this
+            decode(input)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+
         return this
     }
 

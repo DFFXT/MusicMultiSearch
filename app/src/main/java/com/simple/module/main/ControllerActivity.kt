@@ -1,6 +1,7 @@
 package com.simple.module.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -11,7 +12,6 @@ import com.simple.base.BaseActivity
 import com.simple.base.BaseNavFragment
 import com.simple.module.main.vm.ControllerViewModel
 import com.simple.module.player.bean.PlayType
-import com.simple.tools.MediaStoreUtil
 import com.simple.tools.permission.PermissionUtil
 import kotlinx.android.synthetic.main.activity_controller.*
 
@@ -23,11 +23,14 @@ class ControllerActivity : BaseActivity() {
     override fun initView(savedInstanceState: Bundle?) {
         vm = ViewModelProviders.of(this)[ControllerViewModel::class.java]
         vm.op.observe(this, Observer {
-            rootView.visibility= View.VISIBLE
+            rootView.visibility = View.VISIBLE
             it?.addObserver(this@ControllerActivity, getObserver(it))
         })
         PermissionUtil.requestIOPermission(this, REQUEST_CODE_PERMISSION) { allGranted ->
             if (allGranted) vm.connect(this) else finish()
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), 10)
         }
     }
 

@@ -61,5 +61,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_CODE_PERMISSION = 123
+        const val REQUEST_CODE_URI = 111
     }
 }

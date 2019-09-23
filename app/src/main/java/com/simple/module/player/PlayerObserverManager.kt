@@ -2,7 +2,9 @@ package com.simple.module.player
 
 import android.graphics.Bitmap
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import com.simple.base.MyApplication
 import com.simple.bean.Lyrics
 import com.simple.bean.Music
@@ -13,6 +15,7 @@ class PlayerObserverManager {
     private val notification=MyNotification(MyApplication.ctx)
     private val observerMap = HashMap<LifecycleOwner, PlayerObserver>()
     fun add(lifecycle: LifecycleOwner, observer: PlayerObserver) {
+        if(lifecycle.lifecycle.currentState==Lifecycle.State.DESTROYED)return
         observerMap[lifecycle] = observer
         lifecycle.lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {

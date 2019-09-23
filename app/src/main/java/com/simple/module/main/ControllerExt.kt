@@ -95,9 +95,6 @@ fun ControllerActivity.getObserver(playerOperation: PlayerOperation?): PlayerObs
                 )
                 else -> ImageLoad.load(music.iconPath).into(ivArtistIcon)
             }
-            /*val f=CNative().main(music.musicPath)
-            val g=0
-*/
         }
 
         override fun onTimeChange(time: Int, duration: Int) {

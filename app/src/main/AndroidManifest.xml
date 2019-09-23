@@ -31,11 +31,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity
-            android:name=".module.search.searchResult.SearchResultFragment"
-            android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity android:name=".module.download.DownloadActivity" />
         <activity android:name=".module.search.related.SearchActivity" />
         <activity android:name=".module.lyrics.ui.LyricsActivity" />

@@ -66,9 +66,8 @@ class LinkedListImp<T>(private val list: MutableList<T>) : LinkedListI<T>, List<
     }
 
     override fun clear() {
-        index = -1
         list.clear()
-        save()
+        reset()
     }
 
     override fun remove(index: Int) {
@@ -78,6 +77,13 @@ class LinkedListImp<T>(private val list: MutableList<T>) : LinkedListI<T>, List<
         }
         list.removeAt(index)
         save()
+    }
+
+    override fun remove(item: T): Boolean {
+        val p = list.indexOf(item)
+        if (p == -1) return false
+        remove(p)
+        return true
     }
 
     fun save() = save(this)

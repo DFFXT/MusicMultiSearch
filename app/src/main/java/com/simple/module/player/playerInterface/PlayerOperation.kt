@@ -39,4 +39,5 @@ interface LinkedListI<T> : List<T>, Serializable {
     fun addAll(elements: Iterable<T>)
     fun clear()
     fun remove(index: Int)
+    fun remove(item: T): Boolean
 }

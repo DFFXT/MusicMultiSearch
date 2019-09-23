@@ -2,7 +2,6 @@ package com.simple.bean
 
 import android.net.Uri
 import com.simple.base.Constant
-import com.simple.base.MyApplication
 import com.simple.base.replaceLast
 import com.simple.module.search.searchResult.vm.Source
 import com.simple.tools.IOUtil
@@ -11,8 +10,8 @@ import com.simple.tools.MediaStoreUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileInputStream
 import java.io.Serializable
 
 data class Music(
@@ -31,16 +30,10 @@ data class Music(
 
 fun Music.getLocalLyrics(callback: (List<Lyrics>?) -> Unit) {
     GlobalScope.launch(Dispatchers.IO) {
-        val uri = getLyricsUri()
-        if (uri == null) {
-            withContext(Dispatchers.Main){
-                callback(null)
-            }
-        } else {
-            IOUtil.readText(MyApplication.ctx.contentResolver.openInputStream(uri)) { str ->
-                GlobalScope.launch (Dispatchers.Main){
-                    callback(LyricsAnalysis(str).lyricsList)
-                }
+        val path = getLyricsPath() ?: return@launch
+        IOUtil.readText(FileInputStream(path)) { str ->
+            GlobalScope.launch(Dispatchers.Main) {
+                callback(LyricsAnalysis(str).lyricsList)
             }
         }
     }

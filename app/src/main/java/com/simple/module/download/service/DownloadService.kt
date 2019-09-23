@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 class DownloadService : Service() {
@@ -108,15 +109,19 @@ class DownloadService : Service() {
 
 
             if (!music.lrc.isNullOrEmpty()) {
-                MediaStoreUtil.createFileUri(
+                val lrc=File(Constant.Storage.LYRICS_PATH,music.getBaseName()+".lrc")
+                FileOutputStream(lrc).use {out->
+                    out.write(LyricsAnalysis.encode(music.lrc).toByteArray())
+                }
+                /*MediaStoreUtil.createFileUri(
                     music.getBaseName(),
                     "lrc",
                     Constant.Storage.LYRICS_PATH
                 )?.let {
                     MyApplication.ctx.contentResolver.openOutputStream(it)?.use { out ->
-                        out.write(LyricsAnalysis.encode(music.lrc).toByteArray())
+
                     }
-                }
+                }*/
             }
         }
     }
