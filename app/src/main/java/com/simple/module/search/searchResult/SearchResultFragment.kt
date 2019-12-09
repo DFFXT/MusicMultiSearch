@@ -103,6 +103,7 @@ class SearchResultFragment : BaseNavFragment() {
         cvm.op.observe(context as FragmentActivity, Observer {
             op = it
         })
+        cvm.connect(mActivity)
     }
 
 

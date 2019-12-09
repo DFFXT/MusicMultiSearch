@@ -29,6 +29,13 @@ object RetrofitPack {
                         .domain("wwwapi.kugou.com")
                         .build()
                 )
+                list.add(
+                    Cookie.Builder()
+                        .name("kw_token")
+                        .value("B3A2K38GEWK")
+                        .domain("www.kuwo.cn")
+                        .build()
+                    )
                 return list
             }
         })

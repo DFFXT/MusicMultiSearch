@@ -10,6 +10,9 @@ import com.simple.module.internet.Transform
 import com.simple.module.internet.setTransform
 import com.simple.module.search.searchResult.vm.Source
 
+/**
+ *
+ */
 class KwModel : ISearchModel {
     private val http = RetrofitPack.retrofit.create(KwApis::class.java)
     override fun search(keyword: String, page: Int, pageSize: Int): Transform<SearchMusicRes> {

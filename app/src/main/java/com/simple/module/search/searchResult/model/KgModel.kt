@@ -48,6 +48,9 @@ class KgModel : ISearchModel {
 
     override fun requestPath(musicId: String): Transform<String> {
         return http.requestInfo(musicId).setTransform {
+            if(it.data.play_url.startsWith("https://")){
+                return@setTransform it.data.play_url.replaceFirst("https://","http://")
+            }
             return@setTransform it.data.play_url
         }
     }

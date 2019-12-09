@@ -74,7 +74,13 @@ class SearchViewModel : BaseViewModel() {
     fun requestFull(music: Music, callback: (Music) -> Unit) {
         launch(Dispatchers.IO) {
             val path = async {
-                music.musicPath.ifNullOrBlank(mRequestPath(music.musicId))
+                music.musicPath=music.musicPath.ifNullOrBlank(mRequestPath(music.musicId))
+                if(source==Source.KW){
+                    if(music.musicPath.startsWith("https://")){
+                        music.musicPath.replaceFirst("https://","http://")
+                    }else music.musicPath
+                }else music.musicPath
+
             }
             val icon = async {
                 music.iconPath.ifNullOrBlank(mRequestPic(music.musicId))

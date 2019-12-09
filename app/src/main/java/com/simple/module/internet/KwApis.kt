@@ -5,9 +5,12 @@ import com.simple.module.search.searchResult.bean.kw.KwMusicPathRes
 import com.simple.module.search.searchResult.bean.kw.KwSearchRes
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface KwApis {
+    @Headers("csrf:B3A2K38GEWK","Referer:http://www.kuwo.cn")
     @GET("http://www.kuwo.cn/api/www/search/searchMusicBykeyWord")
     fun search(@Query("key") keyword: String, @Query("pn") page: Int, @Query("rn") size: Int): Call<KwSearchRes>
 
