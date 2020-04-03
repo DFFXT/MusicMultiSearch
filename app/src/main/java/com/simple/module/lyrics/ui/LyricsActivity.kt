@@ -17,9 +17,8 @@ import com.simple.module.player.playerInterface.PlayerObserver
 import com.simple.module.player.playerInterface.PlayerOperation
 import kotlinx.android.synthetic.main.activity_lyrics.*
 
-class LyricsActivity : BaseActivity() {
+class LyricsActivity : BaseActivity(R.layout.activity_lyrics) {
     private var op: PlayerOperation? = null
-    override fun layoutId() = R.layout.activity_lyrics
 
     private val observer = object : PlayerObserver() {
         override fun onMusicLoad(music: Music, bitmap: Bitmap?, lyrics: ArrayList<Lyrics>?) {

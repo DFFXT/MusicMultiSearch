@@ -2,12 +2,12 @@ package com.simple.base
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import com.simple.module.internet.log
 import com.simple.tools.WindowUtil
 import com.simple.tools.permission.PermissionCallback
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity (@LayoutRes layoutId:Int): AppCompatActivity(layoutId) {
     private var permissionCallback: HashMap<Int, PermissionCallback>? = null
 
     var topInset = 0
@@ -17,9 +17,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowUtil.setTransparentStatusBar(window)
         WindowUtil.setLightStatus(window)
-        if (layoutId() != 0) {
-            setContentView(layoutId())
-        }
+
         beforeView()
         initView(savedInstanceState)
         window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
@@ -31,7 +29,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
 
-    abstract fun layoutId(): Int
     abstract fun initView(savedInstanceState: Bundle?)
 
     open fun beforeView() {

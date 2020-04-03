@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.addListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,11 +21,10 @@ import com.simple.tools.WindowUtil
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.layout_search_engine.view.*
 
-class SearchActivity : BaseActivity() {
+class SearchActivity : BaseActivity(R.layout.activity_search) {
 
     private var animationRun = false
     private var duration = 200L
-    override fun layoutId() = R.layout.activity_search
     private val searchEngine = Source.values().asList()
     private val searchEngineAdapter: BaseAdapter<Source> by lazy {
         return@lazy BaseSingleAdapter<Source>(R.layout.item_search_engine) { holder, _, item ->
