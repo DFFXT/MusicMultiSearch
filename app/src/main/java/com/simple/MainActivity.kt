@@ -8,9 +8,8 @@ import com.simple.module.internet.log
 import com.simple.module.search.searchResult.vm.SearchViewModel
 import com.simple.module.search.searchResult.vm.Source
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(R.layout.activity_main) {
 
-    override fun layoutId() = R.layout.activity_main
     override fun initView(savedInstanceState: Bundle?) {
         val vm = ViewModelProviders.of(this)[SearchViewModel::class.java]
         vm.source = Source.QQ

@@ -26,7 +26,7 @@ import java.nio.ByteBuffer
  */
 class ID3Encode {
 
-    private var iD3Decode: ID3Decode
+    private var iD3Decode: ID3Decode? = null
     private var data: ByteArray? = null
 
     constructor(input: InputStream?) {
@@ -34,30 +34,31 @@ class ID3Encode {
     }
 
     fun encode(file: File) {
-        if (!iD3Decode.support) return
+        if(iD3Decode==null)return
+        if (!iD3Decode!!.support) return
         if (!file.exists()) return
         RandomAccessFile(file, "rw").use { out ->
-            val frameLength = iD3Decode.frameList.sumBy { it.frame.size } + 10
+            val frameLength = iD3Decode!!.frameList.sumBy { it.frame.size } + 10
             if (frameLength == 10) return
             val head = writeHead(frameLength)
-            if (!iD3Decode.decodeSuccess) {//非id3
+            if (!iD3Decode!!.decodeSuccess) {//非id3
                 data = ByteArray((file.length().toInt()))
                 out.seek(0)
                 out.readFully(data!!)
                 out.seek(0)
                 out.write(head)
-                for (b in iD3Decode.frameList) {
+                for (b in iD3Decode!!.frameList) {
                     out.write(b.frame)
                 }
                 out.write(data!!)
             } else {//id3 需要替换
-                out.seek(iD3Decode.allFrameLength.toLong())
-                data = ByteArray((file.length() - iD3Decode.allFrameLength).toInt())
+                out.seek(iD3Decode!!.allFrameLength.toLong())
+                data = ByteArray((file.length() - iD3Decode!!.allFrameLength).toInt())
                 out.readFully(data!!)
                 out.setLength((frameLength + data!!.size).toLong())
                 out.seek(0)
                 out.write(head)
-                for (frame in iD3Decode.frameList) {
+                for (frame in iD3Decode!!.frameList) {
                     out.write(frame.frame)
                 }
                 out.write(data!!)
@@ -158,7 +159,7 @@ class ID3Encode {
     }
 
     private fun addFrame(frameId: FrameID, data: ByteArray) {
-        for (frame in iD3Decode.frameList) {
+        for (frame in iD3Decode!!.frameList) {
             if (frame.tag == frameId.name) {
                 frame.frame = data
                 return
@@ -167,7 +168,7 @@ class ID3Encode {
         val f = FrameInfo()
         f.tag = frameId.name
         f.frame = data
-        iD3Decode.frameList.add(f)
+        iD3Decode!!.frameList.add(f)
     }
 
     companion object {

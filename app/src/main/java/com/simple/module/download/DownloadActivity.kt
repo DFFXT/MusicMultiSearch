@@ -11,8 +11,7 @@ import com.simple.base.setUpWithViewPager2
 import com.simple.tools.ResUtil
 import kotlinx.android.synthetic.main.activity_download.*
 
-class DownloadActivity : BaseActivity() {
-    override fun layoutId() = R.layout.activity_download
+class DownloadActivity : BaseActivity(R.layout.activity_download) {
     private val fragments = ArrayList<Fragment>()
     private val titles = ArrayList<String>()
 

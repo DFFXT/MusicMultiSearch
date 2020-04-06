@@ -39,71 +39,76 @@ class ID3Decode {
     var allFrameLength = 0
         private set
 
-    fun decode(input: InputStream?): ID3Decode {
-        input?.use {
-            val head = input.read(10) ?: return this
+    fun decode(input: InputStream?): ID3Decode ?{
+        try {
+            input?.use {
+                val head = input.read(10) ?: return this
 
-            if (String(head, 0, 3) != FrameID.ID3.name) {
-                support =
-                    (head[0] == ID3Encode.MP3_HEAD[0] && head[1] == ID3Encode.MP3_HEAD[1] && head[2] == ID3Encode.MP3_HEAD[2] && head[3] == ID3Encode.MP3_HEAD[3])
-                return this
-            }
-            val size =
-                ((head[2 + 4].toInt() and 0x7f) * 128 * 128 * 128 + (head[2 + 5].toInt() and 0xff) * 128 * 128 + (head[2 + 6].toInt() and 0xff) * 128 + head[2 + 7])
-            val allFrame = input.read(size - 10) ?: return this
-            allFrameLength = size
-            decodeSuccess = true
-            var start = 0
-            while (true) {
-                if (start >= allFrame.size) break
-                if (allFrame[start].toInt() == 0 || allFrame[start + 1].toInt() == 0 || allFrame[start + 2].toInt() == 0 || allFrame[start + 3].toInt() == 0) break
-                val tag = (String(allFrame, start, 4))
-                //不包括10字节的头部
-                val frameSize =
-                    ((allFrame[start - 2 + 6] and 0x7F) * 128 * 128 * 128 + (allFrame[start - 2 + 7] and 0x7F) * 128 * 128 + (allFrame[start - 2 + 8] and 0x7F) * 128
-                            + (allFrame[start - 2 + 9] and 0x7F))
-                if (frameSize + start + 10 > size) return@use
-                val frame = FrameInfo()
-                frame.tag = tag
-                frame.frame = allFrame.copyOfRange(start, start + frameSize + 10)
-                when (tag) {
-                    //图片帧以 0image/png030 或 0image/jpeg030 开始
-                    FrameID.APIC.name -> {
-                        var s = 0
-                        for (i in start + 11 until start + 11 + 13 + 11) {//寻找030
-                            if (allFrame[i].toInt() == 0 && allFrame[i + 1].toInt() == 3 && allFrame[i + 2].toInt() == 0) {
-                                s = i + 3
-                                break
-                            }
-                        }
-                        var index = 0
-                        while (s == 0 && index < TypeArray.size) {//没有030寻找图片开头
-                            s = findPicStart(
-                                allFrame,
-                                start + 11,
-                                min(14, frameSize),
-                                TypeArray[index]
-                            )
-                            index++
-                        }
-                        bitmap = BitmapFactory.decodeByteArray(allFrame, s, frameSize - (s - start))
-                    }
-                    FrameID.TEXT.name -> {
-                        lyrics =
-                            LyricsAnalysis(String(allFrame, start + 11, frameSize - 1)).lyricsList
-                    }
-                    FrameID.TIT2.name -> {
-                        title = String(allFrame, start + 11, frameSize - 1)
-                    }
-                    /*else -> {
-                        return
-                    }*/
+                if (String(head, 0, 3) != FrameID.ID3.name) {
+                    support =
+                        (head[0] == ID3Encode.MP3_HEAD[0] && head[1] == ID3Encode.MP3_HEAD[1] && head[2] == ID3Encode.MP3_HEAD[2] && head[3] == ID3Encode.MP3_HEAD[3])
+                    return this
                 }
-                start += 10 + frameSize
+                val size =
+                    ((head[2 + 4].toInt() and 0x7f) * 128 * 128 * 128 + (head[2 + 5].toInt() and 0xff) * 128 * 128 + (head[2 + 6].toInt() and 0xff) * 128 + head[2 + 7])
+                val allFrame = input.read(size - 10) ?: return this
+                allFrameLength = size
+                decodeSuccess = true
+                var start = 0
+                while (true) {
+                    if (start >= allFrame.size) break
+                    if (allFrame[start].toInt() == 0 || allFrame[start + 1].toInt() == 0 || allFrame[start + 2].toInt() == 0 || allFrame[start + 3].toInt() == 0) break
+                    val tag = (String(allFrame, start, 4))
+                    //不包括10字节的头部
+                    val frameSize =
+                        ((allFrame[start - 2 + 6] and 0x7F) * 128 * 128 * 128 + (allFrame[start - 2 + 7] and 0x7F) * 128 * 128 + (allFrame[start - 2 + 8] and 0x7F) * 128
+                                + (allFrame[start - 2 + 9] and 0x7F))
+                    if (frameSize + start + 10 > size) return@use
+                    val frame = FrameInfo()
+                    frame.tag = tag
+                    frame.frame = allFrame.copyOfRange(start, start + frameSize + 10)
+                    when (tag) {
+                        //图片帧以 0image/png030 或 0image/jpeg030 开始
+                        FrameID.APIC.name -> {
+                            var s = 0
+                            for (i in start + 11 until start + 11 + 13 + 11) {//寻找030
+                                if (allFrame[i].toInt() == 0 && allFrame[i + 1].toInt() == 3 && allFrame[i + 2].toInt() == 0) {
+                                    s = i + 3
+                                    break
+                                }
+                            }
+                            var index = 0
+                            while (s == 0 && index < TypeArray.size) {//没有030寻找图片开头
+                                s = findPicStart(
+                                    allFrame,
+                                    start + 11,
+                                    min(14, frameSize),
+                                    TypeArray[index]
+                                )
+                                index++
+                            }
+                            bitmap = BitmapFactory.decodeByteArray(allFrame, s, frameSize - (s - start))
+                        }
+                        FrameID.TEXT.name -> {
+                            lyrics =
+                                LyricsAnalysis(String(allFrame, start + 11, frameSize - 1)).lyricsList
+                        }
+                        FrameID.TIT2.name -> {
+                            title = String(allFrame, start + 11, frameSize - 1)
+                        }
+                        /*else -> {
+                            return
+                        }*/
+                    }
+                    start += 10 + frameSize
+                }
             }
+            decodeSuccess = true
+            return this
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        decodeSuccess = true
-        return this
+        return null
     }
 
     fun decode(uri: Uri): ID3Decode {
